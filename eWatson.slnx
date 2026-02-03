@@ -4,5 +4,6 @@
     <Project Path="src/eWatson.Persistence.Abstractions/eWatson.Persistence.Abstractions.csproj" />
     <Project Path="src/eWatson.Entities/eWatson.Entities.csproj" />
     <Project Path="src/eWatson.Guards/eWatson.Guards.csproj" />
+    <Project Path="src/eWatson.ValueObjects/eWatson.ValueObjects.csproj" />
   </Folder>
 </Solution>

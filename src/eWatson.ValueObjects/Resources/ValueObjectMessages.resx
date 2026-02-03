@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+              <xsd:attribute name="type" type="xsd:string" use="optional" />
+              <xsd:attribute name="mimetype" type="xsd:string" use="optional" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, ...</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, ...</value>
+  </resheader>
+  <data name="EmailAddressExceedsMaxLength" xml:space="preserve">
+    <value>Email address cannot exceed {0} characters.</value>
+  </data>
+  <data name="EmailAddressInvalidFormat" xml:space="preserve">
+    <value>Email address is not in a valid format.</value>
+  </data>
+  <data name="PhoneNumberInvalidCharacters" xml:space="preserve">
+    <value>Phone number can only contain digits and optional '+' prefix.</value>
+  </data>
+  <data name="PhoneNumberInvalidLength" xml:space="preserve">
+    <value>Phone number must be between {0} and {1} digits.</value>
+  </data>
+  <data name="MoneyInvalidCurrencyCodeLength" xml:space="preserve">
+    <value>Currency code must be exactly 3 characters (ISO 4217).</value>
+  </data>
+  <data name="MoneyCannotAddDifferentCurrencies" xml:space="preserve">
+    <value>Cannot add money with different currencies: {0} and {1}.</value>
+  </data>
+  <data name="MoneyCannotSubtractDifferentCurrencies" xml:space="preserve">
+    <value>Cannot subtract money with different currencies: {0} and {1}.</value>
+  </data>
+  <data name="UrlInvalidFormat" xml:space="preserve">
+    <value>The value '{0}' is not a valid URL.</value>
+  </data>
+  <data name="PostalCodeInvalidCountryCodeLength" xml:space="preserve">
+    <value>Country code must be exactly 2 characters (ISO 3166-1 alpha-2).</value>
+  </data>
+  <data name="PostalCodeInvalidForCountry" xml:space="preserve">
+    <value>Postal code '{0}' is not valid for country '{1}'.</value>
+  </data>
+  <data name="DateRangeStartMustBeBeforeEnd" xml:space="preserve">
+    <value>Start date ({0:yyyy-MM-dd}) must be less than or equal to end date ({1:yyyy-MM-dd}).</value>
+  </data>
+</root>

@@ -4,15 +4,43 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <!-- This is the only packable project -->
+    <IsPackable>true</IsPackable>
+    <PackageDescription>eWatson foundational domain building blocks for .NET applications. Includes entities, value objects, guards, results pattern, and persistence abstractions.</PackageDescription>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\eWatson.Abstractions\eWatson.Abstractions.csproj" />
-    <ProjectReference Include="..\eWatson.Persistence.Abstractions\eWatson.Persistence.Abstractions.csproj" />
-    <ProjectReference Include="..\eWatson.Results\eWatson.Results.csproj" />
-    <ProjectReference Include="..\eWatson.Entities\eWatson.Entities.csproj" />
-    <ProjectReference Include="..\eWatson.Guards\eWatson.Guards.csproj" />
-    <ProjectReference Include="..\eWatson.ValueObjects\eWatson.ValueObjects.csproj" />
+    <!-- Include all project assemblies in the single package -->
+    <ProjectReference Include="..\eWatson.Abstractions\eWatson.Abstractions.csproj" PrivateAssets="All" />
+    <ProjectReference Include="..\eWatson.Persistence.Abstractions\eWatson.Persistence.Abstractions.csproj" PrivateAssets="All" />
+    <ProjectReference Include="..\eWatson.Results\eWatson.Results.csproj" PrivateAssets="All" />
+    <ProjectReference Include="..\eWatson.Entities\eWatson.Entities.csproj" PrivateAssets="All" />
+    <ProjectReference Include="..\eWatson.Guards\eWatson.Guards.csproj" PrivateAssets="All" />
+    <ProjectReference Include="..\eWatson.ValueObjects\eWatson.ValueObjects.csproj" PrivateAssets="All" />
   </ItemGroup>
+
+  <!-- Include all referenced project DLLs and XML docs in the package -->
+  <PropertyGroup>
+    <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
+  </PropertyGroup>
+
+  <Target Name="CopyProjectReferencesToPackage">
+    <ItemGroup>
+      <!-- Include DLLs from all project references (they're copied to our bin folder) -->
+      <BuildOutputInPackage Include="$(OutputPath)eWatson.Abstractions.dll" />
+      <BuildOutputInPackage Include="$(OutputPath)eWatson.Persistence.Abstractions.dll" />
+      <BuildOutputInPackage Include="$(OutputPath)eWatson.Guards.dll" />
+      <BuildOutputInPackage Include="$(OutputPath)eWatson.Results.dll" />
+      <BuildOutputInPackage Include="$(OutputPath)eWatson.Entities.dll" />
+      <BuildOutputInPackage Include="$(OutputPath)eWatson.ValueObjects.dll" />
+      <!-- Include XML documentation files -->
+      <BuildOutputInPackage Include="$(OutputPath)eWatson.Abstractions.xml" />
+      <BuildOutputInPackage Include="$(OutputPath)eWatson.Persistence.Abstractions.xml" />
+      <BuildOutputInPackage Include="$(OutputPath)eWatson.Guards.xml" />
+      <BuildOutputInPackage Include="$(OutputPath)eWatson.Results.xml" />
+      <BuildOutputInPackage Include="$(OutputPath)eWatson.Entities.xml" />
+      <BuildOutputInPackage Include="$(OutputPath)eWatson.ValueObjects.xml" />
+    </ItemGroup>
+  </Target>
 
 </Project>

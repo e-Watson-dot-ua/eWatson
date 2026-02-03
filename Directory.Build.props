@@ -39,7 +39,8 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <IsPackable>true</IsPackable>
+    <!-- Only eWatson project should be packable (it will override this) -->
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <!-- Source Link (for debugging) -->
@@ -49,5 +50,10 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
+
+  <!-- Include README in all packages -->
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
 </Project>

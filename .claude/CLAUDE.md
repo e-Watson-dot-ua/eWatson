@@ -87,13 +87,13 @@ This solution uses a modular multi-project approach for better separation of con
   - **UnitOfWork/**
     - `IUnitOfWork` - Transaction management
 
-**eWatson.Entities** (Entity Implementations) *[Planned]*
+**eWatson.Entities** (Entity Implementations)
 - References: Abstractions
 - Contains:
-  - `Entity<TId>` - Abstract base class with identity and equality
-  - `AggregateRoot<TId>` - Base aggregate root with domain events
-  - `DomainEvent` - Base domain event class
-  - Domain event collection and management
+  - `Entity<TId>` - Abstract base class with identity-based equality
+  - `AggregateRoot<TId>` - Base aggregate root with domain event management
+  - **Events/**
+    - `DomainEvent` - Base domain event record (immutable)
 
 **eWatson.ValueObjects** (Value Object Implementations) *[Planned]*
 - References: Abstractions, Guards
@@ -125,7 +125,7 @@ This solution uses a modular multi-project approach for better separation of con
 eWatson.Abstractions (no dependencies)
     ↓
     ├── eWatson.Persistence.Abstractions (opt-in)
-    ├── eWatson.Entities (planned)
+    ├── eWatson.Entities
     ├── eWatson.ValueObjects → uses Guards for validation (planned)
     └── eWatson.Guards (standalone, no dependencies) (planned)
             ↓
@@ -179,14 +179,12 @@ eWatson/
 │   │   └── UnitOfWork/
 │   │       └── IUnitOfWork.cs
 │   │
-│   ├── eWatson.Entities/          # [Planned]
+│   ├── eWatson.Entities/
 │   │   ├── eWatson.Entities.csproj
-│   │   ├── Entity.cs
 │   │   ├── Entity{TId}.cs
-│   │   ├── AggregateRoot.cs
-│   │   └── DomainEvents/
-│   │       ├── DomainEvent.cs
-│   │       └── DomainEventCollection.cs
+│   │   ├── AggregateRoot{TId}.cs
+│   │   └── Events/
+│   │       └── DomainEvent.cs
 │   │
 │   ├── eWatson.ValueObjects/      # [Planned]
 │   │   ├── eWatson.ValueObjects.csproj
@@ -253,6 +251,7 @@ eWatson/
 - **Explicit Over Implicit**: Favor clarity and explicit naming over brevity
 - **Null Safety**: Use nullable reference types consistently (enable `<Nullable>enable</Nullable>`)
 - **Testing**: All guards and primitives must have comprehensive unit tests covering edge cases
+- **Line Length**: Maximum line length is 100 characters. Break longer lines for readability
 
 ### Naming Conventions
 
@@ -286,14 +285,43 @@ eWatson/
 
 ### Code Examples
 
-**Domain Event Usage:**
+**Entity and Domain Event Usage:**
 ```csharp
+using eWatson.Entities;
+using eWatson.Entities.Events;
+
+// Define a domain event
+public sealed record OrderPlaced(
+    Guid OrderId,
+    Guid CustomerId,
+    decimal Total
+) : DomainEvent;
+
+// Define an aggregate root
 public class Order : AggregateRoot<Guid>
 {
-    public void PlaceOrder()
+    public Guid CustomerId { get; private set; }
+    public decimal Total { get; private set; }
+    public OrderStatus Status { get; private set; }
+
+    public static Order Create(Guid customerId, decimal total)
     {
-        // Business logic
-        AddDomainEvent(new OrderPlaced(Id, CustomerId, Total));
+        var order = new Order
+        {
+            Id = Guid.NewGuid(),
+            CustomerId = customerId,
+            Total = total,
+            Status = OrderStatus.Pending
+        };
+
+        order.RaiseDomainEvent(new OrderPlaced(order.Id, customerId, total));
+        return order;
+    }
+
+    public void Confirm()
+    {
+        Status = OrderStatus.Confirmed;
+        RaiseDomainEvent(new OrderConfirmed(Id));
     }
 }
 ```

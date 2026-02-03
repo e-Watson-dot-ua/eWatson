@@ -5,36 +5,30 @@ namespace eWatson.Guards.Resources;
 /// </summary>
 internal static class GuardMessages
 {
+    private static readonly System.Resources.ResourceManager _rm =
+        new("eWatson.Guards.Resources.GuardMessages", typeof(GuardMessages).Assembly);
+
     public static string ParameterCannotBeNull(string parameterName)
-        => $"Parameter '{parameterName}' cannot be null.";
+        => string.Format(_rm.GetString("ParameterCannotBeNull")!, parameterName);
 
     public static string ParameterCannotBeNullOrEmpty(string parameterName)
-        => $"Parameter '{parameterName}' cannot be null or empty.";
+        => string.Format(_rm.GetString("ParameterCannotBeNullOrEmpty")!, parameterName);
 
     public static string ParameterCannotBeNullOrWhiteSpace(string parameterName)
-        => $"Parameter '{parameterName}' cannot be null, empty, or whitespace.";
+        => string.Format(_rm.GetString("ParameterCannotBeNullOrWhiteSpace")!, parameterName);
 
     public static string ParameterCannotBeNegative(string parameterName, object value)
-        => $"Parameter '{parameterName}' cannot be negative. Value: {value}";
+        => string.Format(_rm.GetString("ParameterCannotBeNegative")!, parameterName, value);
 
-    public static string ParameterMustBeGreaterThanZero(
-        string parameterName,
-        object value)
-        => $"Parameter '{parameterName}' must be greater than zero. Value: {value}";
+    public static string ParameterMustBeGreaterThanZero(string parameterName, object value)
+        => string.Format(_rm.GetString("ParameterMustBeGreaterThanZero")!, parameterName, value);
 
-    public static string ParameterMustBeBetween(
-        string parameterName,
-        object min,
-        object max,
-        object value)
-        => $"Parameter '{parameterName}' must be between {min} and {max}. "
-            + $"Value: {value}";
+    public static string ParameterMustBeBetween(string parameterName, object min, object max, object value)
+        => string.Format(_rm.GetString("ParameterMustBeBetween")!, parameterName, min, max, value);
 
-    public static string ParameterCannotBeValue(
-        string parameterName,
-        object invalidValue)
-        => $"Parameter '{parameterName}' cannot be '{invalidValue}'.";
+    public static string ParameterCannotBeValue(string parameterName, object invalidValue)
+        => string.Format(_rm.GetString("ParameterCannotBeValue")!, parameterName, invalidValue);
 
     public static string ParameterCannotBeEmptyGuid(string parameterName)
-        => $"Parameter '{parameterName}' cannot be an empty Guid.";
+        => string.Format(_rm.GetString("ParameterCannotBeEmptyGuid")!, parameterName);
 }

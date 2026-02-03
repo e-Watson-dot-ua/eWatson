@@ -108,11 +108,28 @@ This solution uses a modular multi-project approach for better separation of con
     - `PostalCode` - Postal code
     - `DateRange` - Date range value object
 
-**eWatson.Guards** (Validation & Guard Clauses) *[Planned]*
+
+**eWatson.Guards** (Validation & Guard Clauses)
 - No dependencies (completely standalone)
 - Contains:
-  - `Guard.Against.*` - Static guard methods (Null, NullOrEmpty, NegativeOrZero, OutOfRange, InvalidFormat, etc.)
-  - `GuardException` - Guard violation exception
+  - `Guard.cs` - Static entry point for guard clauses
+  - `Guard.Against.cs` - Static class with guard methods (Null, NullOrEmpty, NegativeOrZero, OutOfRange, etc.)
+  - `Resources/GuardMessages.cs` - Strongly-typed access to error messages
+  - `Resources/GuardMessages.resx` - Resource file for error messages (localization-ready)
+  - `Exceptions/GuardException.cs` - Guard violation exception
+
+**Folder Structure:**
+```
+eWatson.Guards/
+├── eWatson.Guards.csproj
+├── Guard.cs
+├── Guard.Against.cs
+├── Resources/
+│   ├── GuardMessages.cs
+│   └── GuardMessages.resx
+└── Exceptions/
+    └── GuardException.cs
+```
 
 **eWatson** (Meta-Package) *[Planned]*
 - References all projects above

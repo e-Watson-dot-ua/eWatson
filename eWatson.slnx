@@ -2,6 +2,7 @@
   <Folder Name="/src/">
     <Project Path="src/eWatson.Abstractions/eWatson.Abstractions.csproj" />
     <Project Path="src/eWatson.Persistence.Abstractions/eWatson.Persistence.Abstractions.csproj" />
+    <Project Path="src/eWatson.Results/eWatson.Results.csproj" />
     <Project Path="src/eWatson.Entities/eWatson.Entities.csproj" />
     <Project Path="src/eWatson.Guards/eWatson.Guards.csproj" />
     <Project Path="src/eWatson.ValueObjects/eWatson.ValueObjects.csproj" />

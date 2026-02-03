@@ -10,6 +10,7 @@ eWatson is a private .NET Core NuGet package containing foundational domain buil
 - **Domain Entities**: Base classes and interfaces for domain entities
 - **Guards**: Validation and assertion logic for defensive programming
 - **Primitives**: Value objects and primitive domain types (e.g., Email, PhoneNumber, Money)
+- **Results**: Functional error handling with Result/Error pattern
 
 ## Development Commands
 
@@ -87,6 +88,17 @@ This solution uses a modular multi-project approach for better separation of con
   - **UnitOfWork/**
     - `IUnitOfWork` - Transaction management
 
+**eWatson.Results** (Result Pattern Implementations)
+- References: Abstractions
+- Contains:
+  - `Result` - Implements IResult for operations without return values
+  - `Result<T>` - Implements IResult<T> for operations with return values
+  - `Error` - Represents error information with code, message, and metadata
+  - `ResultExtensions` - Functional extensions (Match, Map, Bind, Tap, etc.)
+  - **Resources/**
+    - `ResultMessages.cs` - Strongly-typed access to error messages
+    - `ResultMessages.resx` - Resource file for error messages (localization-ready)
+
 **eWatson.Entities** (Entity Implementations)
 - References: Abstractions
 - Contains:
@@ -145,6 +157,7 @@ eWatson.Guards/
 eWatson.Abstractions (no dependencies)
     ↓
     ├── eWatson.Persistence.Abstractions (opt-in)
+    ├── eWatson.Results → functional error handling
     ├── eWatson.Entities
     ├── eWatson.ValueObjects → uses Guards for validation
     └── eWatson.Guards (standalone, no dependencies)
@@ -198,6 +211,16 @@ eWatson/
 │   │   │   └── IReadOnlyRepository{T,TId}.cs
 │   │   └── UnitOfWork/
 │   │       └── IUnitOfWork.cs
+│   │
+│   ├── eWatson.Results/
+│   │   ├── eWatson.Results.csproj
+│   │   ├── Result.cs
+│   │   ├── Result{T}.cs
+│   │   ├── Error.cs
+│   │   ├── ResultExtensions.cs
+│   │   └── Resources/
+│   │       ├── ResultMessages.cs
+│   │       └── ResultMessages.resx
 │   │
 │   ├── eWatson.Entities/
 │   │   ├── eWatson.Entities.csproj
@@ -353,9 +376,44 @@ public class Order : AggregateRoot<Guid>
 }
 ```
 
+**Error Factory Methods:**
+```csharp
+using eWatson.Results;
+
+// General error
+var error = Error.General("Something went wrong");
+
+// Validation error with optional field name
+var validationError = Error.Validation("Invalid email format", "Email");
+
+// Not found error with optional entity name
+var notFoundError = Error.NotFound("Customer not found", "Customer");
+
+// Authorization errors
+var unauthorizedError = Error.Unauthorized();  // Uses default message
+var forbiddenError = Error.Forbidden();        // Uses default message
+
+// Conflict error
+var conflictError = Error.Conflict("Email already exists");
+
+// Custom error with metadata
+var customError = new Error(
+    "Custom.Error",
+    "Custom error message",
+    new Dictionary<string, object>
+    {
+        ["Property"] = "Value",
+        ["Timestamp"] = DateTime.UtcNow
+    }
+);
+```
+
 **Result Pattern Usage:**
 ```csharp
-public IResult<Customer> CreateCustomer(string email)
+using eWatson.Results;
+
+// Basic usage with string errors
+public Result<Customer> CreateCustomer(string email)
 {
     if (string.IsNullOrEmpty(email))
         return Result.Failure<Customer>("Email is required");
@@ -363,6 +421,61 @@ public IResult<Customer> CreateCustomer(string email)
     var customer = new Customer(email);
     return Result.Success(customer);
 }
+
+// Using Error class with detailed information
+public Result<Order> PlaceOrder(Guid customerId, decimal amount)
+{
+    if (amount <= 0)
+        return Error.Validation("Amount must be greater than zero", "Amount");
+
+    var order = new Order(customerId, amount);
+    return order;  // Implicit conversion from T to Result<T>
+}
+
+// Functional composition with extensions
+public async Task<Result<OrderDto>> GetOrderAsync(Guid orderId)
+{
+    return await _repository.FindByIdAsync(orderId)
+        .ToResult(Error.NotFound($"Order {orderId} not found", "Order"))
+        .Map(order => new OrderDto(order))
+        .Tap(dto => _logger.LogInformation("Order retrieved: {Id}", dto.Id))
+        .TapError(error => _logger.LogWarning("Order not found: {Error}", error));
+}
+
+// Pattern matching
+var result = CreateCustomer(email);
+result.Match(
+    onSuccess: customer => Console.WriteLine($"Created: {customer.Name}"),
+    onFailure: error => Console.WriteLine($"Failed: {error}")
+);
+
+// Chaining operations with Bind
+public Result<Invoice> CreateInvoice(Guid orderId)
+{
+    return GetOrder(orderId)
+        .Ensure(order => order.Status == OrderStatus.Completed,
+            "Order must be completed")
+        .Bind(order => GenerateInvoice(order));
+}
+
+// Combining multiple results
+var results = new[] { result1, result2, result3 };
+Result<IEnumerable<Order>> combined = results.Combine();
+// Returns first failure or all values on success
+```
+
+**Available Result Extensions:**
+- `Match<T, TResult>()` - Pattern match to transform result to another type
+- `Match<T>()` - Pattern match to execute actions
+- `Map<TIn, TOut>()` - Transform success value
+- `Bind<TIn, TOut>()` - Chain result-returning operations (flatMap)
+- `Tap<T>()` - Execute side effect on success (e.g., logging)
+- `TapError<T>()` - Execute side effect on failure (e.g., logging errors)
+- `Ensure<T>()` - Validate success value with predicate
+- `ToResult<T>()` - Convert nullable to Result
+- `MapAsync<TIn, TOut>()` - Async map transformation
+- `BindAsync<TIn, TOut>()` - Async bind operation
+- `Combine<T>()` - Combine multiple results into one
 ```
 
 **Specification Pattern Usage:**

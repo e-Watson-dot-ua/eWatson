@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/src/">
     <Project Path="src/eWatson.Abstractions/eWatson.Abstractions.csproj" />
+    <Project Path="src/eWatson.Persistence.Abstractions/eWatson.Persistence.Abstractions.csproj" />
   </Folder>
 </Solution>

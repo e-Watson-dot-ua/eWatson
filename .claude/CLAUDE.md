@@ -52,21 +52,50 @@ This solution uses a modular multi-project approach for better separation of con
 - Pure interfaces and base contracts
 - No implementations, no external dependencies
 - Contains:
-  - `IEntity`, `IEntity<TId>` - Entity interfaces
-  - `IAggregateRoot` - Aggregate root marker
-  - `IValueObject` - Value object marker
-  - `IDomainEvent` - Domain event interface
-  - `IResult` - Result pattern interface (optional)
+  - **Entities/**
+    - `IEntity` - Non-generic entity marker
+    - `IEntity<TId>` - Entity with strongly-typed identifier
+    - `IAggregateRoot` - Aggregate root marker
+    - `IAggregateRoot<TId>` - Aggregate root with strongly-typed identifier
+    - `IHasDomainEvents` - Domain events capability
+  - **Events/**
+    - `IDomainEvent` - Domain event interface
+    - `IAggregateEvent<TId>` - Event with aggregate identifier
+    - `IDomainEventHandler<TEvent>` - Event handler interface
+    - `IDomainEventDispatcher` - Event dispatcher interface
+  - **ValueObjects/**
+    - `IValueObject` - Value object marker
+  - **Results/**
+    - `IResult` - Operation result without return value
+    - `IResult<T>` - Operation result with return value
+  - **Auditing/**
+    - `IAuditable` - Creation and modification tracking
+    - `ISoftDeletable` - Soft deletion support
+    - `IHasConcurrencyToken` - Optimistic concurrency control
+  - **Specifications/**
+    - `ISpecification<T>` - Specification pattern for business rules
+    - `ICompositeSpecification<T>` - Composable specifications
 
-**eWatson.Entities** (Entity Implementations)
+**eWatson.Persistence.Abstractions** (Infrastructure Contracts)
+- References: Abstractions
+- Optional package for persistence patterns
+- Contains:
+  - **Repositories/**
+    - `IRepository<T>` - Base repository for aggregate roots
+    - `IRepository<T, TId>` - Repository with strongly-typed identifier
+    - `IReadOnlyRepository<T, TId>` - Read-only repository for CQRS queries
+  - **UnitOfWork/**
+    - `IUnitOfWork` - Transaction management
+
+**eWatson.Entities** (Entity Implementations) *[Planned]*
 - References: Abstractions
 - Contains:
   - `Entity<TId>` - Abstract base class with identity and equality
-  - `AggregateRoot` - Base aggregate root with domain events
+  - `AggregateRoot<TId>` - Base aggregate root with domain events
   - `DomainEvent` - Base domain event class
   - Domain event collection and management
 
-**eWatson.ValueObjects** (Value Object Implementations)
+**eWatson.ValueObjects** (Value Object Implementations) *[Planned]*
 - References: Abstractions, Guards
 - Contains:
   - `ValueObject` - Abstract base with structural equality
@@ -79,13 +108,13 @@ This solution uses a modular multi-project approach for better separation of con
     - `PostalCode` - Postal code
     - `DateRange` - Date range value object
 
-**eWatson.Guards** (Validation & Guard Clauses)
+**eWatson.Guards** (Validation & Guard Clauses) *[Planned]*
 - No dependencies (completely standalone)
 - Contains:
   - `Guard.Against.*` - Static guard methods (Null, NullOrEmpty, NegativeOrZero, OutOfRange, InvalidFormat, etc.)
   - `GuardException` - Guard violation exception
 
-**eWatson** (Meta-Package)
+**eWatson** (Meta-Package) *[Planned]*
 - References all projects above
 - No source code
 - Convenience package for consumers to install everything at once
@@ -95,11 +124,12 @@ This solution uses a modular multi-project approach for better separation of con
 ```
 eWatson.Abstractions (no dependencies)
     ↓
-    ├── eWatson.Entities
-    ├── eWatson.ValueObjects → uses Guards for validation
-    └── eWatson.Guards (standalone, no dependencies)
+    ├── eWatson.Persistence.Abstractions (opt-in)
+    ├── eWatson.Entities (planned)
+    ├── eWatson.ValueObjects → uses Guards for validation (planned)
+    └── eWatson.Guards (standalone, no dependencies) (planned)
             ↓
-        eWatson (meta-package, references all)
+        eWatson (meta-package, references all) (planned)
 ```
 
 ### Folder Structure
@@ -110,21 +140,46 @@ eWatson/
 │   └── CLAUDE.md
 ├── .gitignore
 ├── README.md
-├── eWatson.sln                    # Solution file at root
+├── eWatson.slnx                   # Solution file at root
 ├── Directory.Build.props          # Shared MSBuild properties
+├── Directory.Packages.props       # Central Package Management
 ├── src/
 │   ├── eWatson.Abstractions/
 │   │   ├── eWatson.Abstractions.csproj
 │   │   ├── Entities/
 │   │   │   ├── IEntity.cs
 │   │   │   ├── IEntity{TId}.cs
-│   │   │   └── IAggregateRoot.cs
+│   │   │   ├── IAggregateRoot.cs
+│   │   │   ├── IAggregateRoot{TId}.cs
+│   │   │   └── IHasDomainEvents.cs
+│   │   ├── Events/
+│   │   │   ├── IDomainEvent.cs
+│   │   │   ├── IAggregateEvent.cs
+│   │   │   ├── IDomainEventHandler{T}.cs
+│   │   │   └── IDomainEventDispatcher.cs
 │   │   ├── ValueObjects/
 │   │   │   └── IValueObject.cs
-│   │   └── Events/
-│   │       └── IDomainEvent.cs
+│   │   ├── Results/
+│   │   │   ├── IResult.cs
+│   │   │   └── IResult{T}.cs
+│   │   ├── Auditing/
+│   │   │   ├── IAuditable.cs
+│   │   │   ├── ISoftDeletable.cs
+│   │   │   └── IHasConcurrencyToken.cs
+│   │   └── Specifications/
+│   │       ├── ISpecification{T}.cs
+│   │       └── ICompositeSpecification{T}.cs
 │   │
-│   ├── eWatson.Entities/
+│   ├── eWatson.Persistence.Abstractions/
+│   │   ├── eWatson.Persistence.Abstractions.csproj
+│   │   ├── Repositories/
+│   │   │   ├── IRepository{T}.cs
+│   │   │   ├── IRepository{T,TId}.cs
+│   │   │   └── IReadOnlyRepository{T,TId}.cs
+│   │   └── UnitOfWork/
+│   │       └── IUnitOfWork.cs
+│   │
+│   ├── eWatson.Entities/          # [Planned]
 │   │   ├── eWatson.Entities.csproj
 │   │   ├── Entity.cs
 │   │   ├── Entity{TId}.cs
@@ -133,7 +188,7 @@ eWatson/
 │   │       ├── DomainEvent.cs
 │   │       └── DomainEventCollection.cs
 │   │
-│   ├── eWatson.ValueObjects/
+│   ├── eWatson.ValueObjects/      # [Planned]
 │   │   ├── eWatson.ValueObjects.csproj
 │   │   ├── ValueObject.cs
 │   │   └── Primitives/
@@ -145,17 +200,17 @@ eWatson/
 │   │       ├── PostalCode.cs
 │   │       └── DateRange.cs
 │   │
-│   ├── eWatson.Guards/
+│   ├── eWatson.Guards/            # [Planned]
 │   │   ├── eWatson.Guards.csproj
 │   │   ├── Guard.cs
 │   │   ├── Guard.Against.cs
 │   │   └── Exceptions/
 │   │       └── GuardException.cs
 │   │
-│   └── eWatson/
+│   └── eWatson/                   # [Planned]
 │       └── eWatson.csproj         # Meta-package
 │
-└── tests/
+└── tests/                         # [Planned]
     ├── eWatson.Entities.Tests/
     │   ├── eWatson.Entities.Tests.csproj
     │   ├── EntityTests.cs
@@ -177,22 +232,94 @@ eWatson/
 ### Setup Files Location
 
 **Root directory:**
-- `eWatson.sln` - Solution file at repository root
+- `eWatson.slnx` - Solution file at repository root (XML-based solution format)
 - `.gitignore` - .NET specific gitignore
 - `README.md` - Package documentation
 - `Directory.Build.props` - Shared MSBuild properties (target framework, nullable reference types, versioning)
 - `Directory.Build.targets` (optional) - Shared MSBuild targets
-- `Directory.Packages.props` (optional) - Central Package Management for NuGet dependencies
+- `Directory.Packages.props` - Central Package Management for NuGet dependencies
 
 **Project directories (src/ProjectName/):**
 - `ProjectName.csproj` - Individual project files
-- Source code organized by feature/concept
+- Source code organized by feature/concept (namespace folders)
 
 ## Key Patterns and Conventions
 
+### General Principles
+
 - **Immutability**: Value objects and primitives should be immutable
 - **Validation**: All primitives validate on construction, failing fast with descriptive exceptions
-- **No Dependencies**: Keep this package dependency-free (except .NET Core) to avoid version conflicts in consuming projects
+- **No Dependencies**: Keep core packages dependency-free (except .NET) to avoid version conflicts
 - **Explicit Over Implicit**: Favor clarity and explicit naming over brevity
 - **Null Safety**: Use nullable reference types consistently (enable `<Nullable>enable</Nullable>`)
 - **Testing**: All guards and primitives must have comprehensive unit tests covering edge cases
+
+### Naming Conventions
+
+- **CancellationToken Parameters**: Always use `ct` as the parameter name (not `cancellationToken`)
+  ```csharp
+  // Correct
+  Task<Order?> GetByIdAsync(Guid id, CancellationToken ct = default);
+
+  // Incorrect
+  Task<Order?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+  ```
+
+- **Generic Type Parameters**:
+  - `T` - Generic type
+  - `TId` - Identifier type
+  - `TEvent` - Event type
+  - `TKey` - Key type (alternative to TId)
+
+- **Interface Naming**:
+  - Marker interfaces: `IEntity`, `IAggregateRoot`, `IValueObject`
+  - Capability interfaces: `IHasDomainEvents`, `IAuditable`, `ISoftDeletable`
+  - Pattern interfaces: `IRepository<T>`, `ISpecification<T>`, `IResult<T>`
+
+### Architecture Patterns
+
+- **Domain Events**: Only aggregate roots raise domain events via `IHasDomainEvents`
+- **Specifications**: Encapsulate business rules using `ISpecification<T>` pattern
+- **Result Pattern**: Use `IResult` and `IResult<T>` for functional error handling instead of exceptions for expected failures
+- **Repository Pattern**: Repositories work only with aggregate roots (`IAggregateRoot`), not individual entities
+- **CQRS Separation**: Use `IRepository<T, TId>` for commands, `IReadOnlyRepository<T, TId>` for queries
+
+### Code Examples
+
+**Domain Event Usage:**
+```csharp
+public class Order : AggregateRoot<Guid>
+{
+    public void PlaceOrder()
+    {
+        // Business logic
+        AddDomainEvent(new OrderPlaced(Id, CustomerId, Total));
+    }
+}
+```
+
+**Result Pattern Usage:**
+```csharp
+public IResult<Customer> CreateCustomer(string email)
+{
+    if (string.IsNullOrEmpty(email))
+        return Result.Failure<Customer>("Email is required");
+
+    var customer = new Customer(email);
+    return Result.Success(customer);
+}
+```
+
+**Specification Pattern Usage:**
+```csharp
+public class ActiveCustomerSpec : ISpecification<Customer>
+{
+    public bool IsSatisfiedBy(Customer customer)
+        => customer.IsActive && !customer.IsDeleted;
+}
+
+// Usage with repository
+var activeCustomers = await _repository.FindAsync(
+    new ActiveCustomerSpec(),
+    ct);
+```

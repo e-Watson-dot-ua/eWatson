@@ -1,0 +1,5 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/eWatson.Abstractions/eWatson.Abstractions.csproj" />
+  </Folder>
+</Solution>

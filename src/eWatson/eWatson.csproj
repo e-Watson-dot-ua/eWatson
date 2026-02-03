@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\eWatson.Abstractions\eWatson.Abstractions.csproj" />
+    <ProjectReference Include="..\eWatson.Persistence.Abstractions\eWatson.Persistence.Abstractions.csproj" />
+    <ProjectReference Include="..\eWatson.Entities\eWatson.Entities.csproj" />
+    <ProjectReference Include="..\eWatson.Guards\eWatson.Guards.csproj" />
+    <ProjectReference Include="..\eWatson.ValueObjects\eWatson.ValueObjects.csproj" />
+  </ItemGroup>
+
+</Project>

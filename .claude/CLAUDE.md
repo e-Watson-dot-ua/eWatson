@@ -95,11 +95,14 @@ This solution uses a modular multi-project approach for better separation of con
   - **Events/**
     - `DomainEvent` - Base domain event record (immutable)
 
-**eWatson.ValueObjects** (Value Object Implementations) *[Planned]*
+**eWatson.ValueObjects** (Value Object Implementations)
 - References: Abstractions, Guards
 - Contains:
   - `ValueObject` - Abstract base with structural equality
-  - Primitives:
+  - **Resources/**
+    - `ValueObjectMessages.cs` - Strongly-typed access to error messages
+    - `ValueObjectMessages.resx` - Resource file for error messages (localization-ready)
+  - **Primitives/**
     - `EmailAddress` - Email with validation
     - `PhoneNumber` - Phone number with format support
     - `Money` - Money with currency
@@ -131,7 +134,7 @@ eWatson.Guards/
     └── GuardException.cs
 ```
 
-**eWatson** (Meta-Package) *[Planned]*
+**eWatson** (Meta-Package)
 - References all projects above
 - No source code
 - Convenience package for consumers to install everything at once
@@ -143,10 +146,10 @@ eWatson.Abstractions (no dependencies)
     ↓
     ├── eWatson.Persistence.Abstractions (opt-in)
     ├── eWatson.Entities
-    ├── eWatson.ValueObjects → uses Guards for validation (planned)
-    └── eWatson.Guards (standalone, no dependencies) (planned)
+    ├── eWatson.ValueObjects → uses Guards for validation
+    └── eWatson.Guards (standalone, no dependencies)
             ↓
-        eWatson (meta-package, references all) (planned)
+        eWatson (meta-package, references all)
 ```
 
 ### Folder Structure
@@ -203,9 +206,12 @@ eWatson/
 │   │   └── Events/
 │   │       └── DomainEvent.cs
 │   │
-│   ├── eWatson.ValueObjects/      # [Planned]
+│   ├── eWatson.ValueObjects/
 │   │   ├── eWatson.ValueObjects.csproj
 │   │   ├── ValueObject.cs
+│   │   ├── Resources/
+│   │   │   ├── ValueObjectMessages.cs
+│   │   │   └── ValueObjectMessages.resx
 │   │   └── Primitives/
 │   │       ├── EmailAddress.cs
 │   │       ├── PhoneNumber.cs
@@ -215,14 +221,17 @@ eWatson/
 │   │       ├── PostalCode.cs
 │   │       └── DateRange.cs
 │   │
-│   ├── eWatson.Guards/            # [Planned]
+│   ├── eWatson.Guards/
 │   │   ├── eWatson.Guards.csproj
 │   │   ├── Guard.cs
 │   │   ├── Guard.Against.cs
+│   │   ├── Resources/
+│   │   │   ├── GuardMessages.cs
+│   │   │   └── GuardMessages.resx
 │   │   └── Exceptions/
 │   │       └── GuardException.cs
 │   │
-│   └── eWatson/                   # [Planned]
+│   └── eWatson/
 │       └── eWatson.csproj         # Meta-package
 │
 └── tests/                         # [Planned]
@@ -269,6 +278,7 @@ eWatson/
 - **Null Safety**: Use nullable reference types consistently (enable `<Nullable>enable</Nullable>`)
 - **Testing**: All guards and primitives must have comprehensive unit tests covering edge cases
 - **Line Length**: Maximum line length is 100 characters. Break longer lines for readability
+- **Error Messages**: All user-facing error messages must be stored in .resx resource files with strongly-typed accessor classes (e.g., `GuardMessages.resx` with `GuardMessages.cs`). This enables localization and centralizes message management.
 
 ### Naming Conventions
 

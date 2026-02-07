@@ -25,7 +25,7 @@ public abstract class Specification<T> : ISpecification<T>
     public Paging? Paging { get; private set; }
 
     /// <inheritdoc />
-    public bool AsNoTracking { get; private set; }
+    public bool AsNoTracking { get; private set; } = true;
 
     /// <inheritdoc />
     public bool Distinct { get; private set; }
@@ -106,5 +106,15 @@ public abstract class Specification<T> : ISpecification<T>
     protected void EnableDistinct()
     {
         Distinct = true;
+    }
+
+    /// <summary>
+    /// Implicitly converts the specification to its criteria expression.
+    /// </summary>
+    /// <param name="specification">The specification to convert.</param>
+    /// <returns>The criteria expression, or null if no criteria is defined.</returns>
+    public static implicit operator Expression<Func<T, bool>>?(Specification<T>? specification)
+    {
+        return specification?.Criteria;
     }
 }

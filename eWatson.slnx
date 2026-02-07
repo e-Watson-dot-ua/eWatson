@@ -9,6 +9,7 @@
     <Project Path="src/eWatson/eWatson.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/eWatson.Abstractions.Tests/eWatson.Abstractions.Tests.csproj" />
     <Project Path="tests/eWatson.Guards.Tests/eWatson.Guards.Tests.csproj" />
   </Folder>
 </Solution>

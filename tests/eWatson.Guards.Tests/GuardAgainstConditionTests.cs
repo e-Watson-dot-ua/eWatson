@@ -104,7 +104,6 @@ public class GuardAgainstConditionTests
     public void True_WithComplexCondition_WorksCorrectly()
     {
         // Arrange
-        string email = "test@example.com";
         bool isDuplicate = false;
         string message = "Email already exists";
 

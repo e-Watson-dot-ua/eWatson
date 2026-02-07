@@ -3,10 +3,11 @@ using eWatson.Abstractions.Entities;
 namespace eWatson.Persistence.Abstractions.Repositories;
 
 /// <summary>
-/// Base repository interface for aggregate roots.
+/// Write repository interface for command operations on aggregate roots.
+/// Provides add, update, and remove operations for CQRS command handling.
 /// </summary>
 /// <typeparam name="T">The aggregate root type.</typeparam>
-public interface IRepository<T> where T : IAggregateRoot
+public interface IWriteRepository<T> where T : IAggregateRoot
 {
     /// <summary>
     /// Adds a new aggregate to the repository.

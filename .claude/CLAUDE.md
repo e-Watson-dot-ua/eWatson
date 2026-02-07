@@ -75,16 +75,22 @@ This solution uses a modular multi-project approach for better separation of con
     - `IHasConcurrencyToken` - Optimistic concurrency control
   - **Specifications/**
     - `ISpecification<T>` - Specification pattern for business rules
+    - `Specification<T>` - Base class with fluent API for building specifications
     - `ICompositeSpecification<T>` - Composable specifications
+    - `Include<T>` - Navigation property eager loading
+    - `OrderBy<T>` - Ordering expressions
+    - **Pagination/**
+      - `Paging` - Pagination parameters (page number, size, skip)
+      - `PageInfo` - Pagination metadata (total items, pages, navigation)
 
 **eWatson.Persistence.Abstractions** (Infrastructure Contracts)
 - References: Abstractions
 - Optional package for persistence patterns
 - Contains:
   - **Repositories/**
-    - `IRepository<T>` - Base repository for aggregate roots
-    - `IRepository<T, TId>` - Repository with strongly-typed identifier
-    - `IReadOnlyRepository<T, TId>` - Read-only repository for CQRS queries
+    - `IWriteRepository<T>` - Write operations for CQRS commands
+    - `IReadRepository<T, TId>` - Read operations for CQRS queries
+    - `IRepository<T, TId>` - Combined read/write repository
   - **UnitOfWork/**
     - `IUnitOfWork` - Transaction management
 
@@ -201,14 +207,20 @@ eWatson/
 │   │   │   └── IHasConcurrencyToken.cs
 │   │   └── Specifications/
 │   │       ├── ISpecification{T}.cs
-│   │       └── ICompositeSpecification{T}.cs
+│   │       ├── Specification{T}.cs
+│   │       ├── ICompositeSpecification{T}.cs
+│   │       ├── Include{T}.cs
+│   │       ├── OrderBy{T}.cs
+│   │       └── Pagination/
+│   │           ├── Paging.cs
+│   │           └── PageInfo.cs
 │   │
 │   ├── eWatson.Persistence.Abstractions/
 │   │   ├── eWatson.Persistence.Abstractions.csproj
 │   │   ├── Repositories/
-│   │   │   ├── IRepository{T}.cs
-│   │   │   ├── IRepository{T,TId}.cs
-│   │   │   └── IReadOnlyRepository{T,TId}.cs
+│   │   │   ├── IWriteRepository{T}.cs
+│   │   │   ├── IReadRepository{T,TId}.cs
+│   │   │   └── IRepository{T,TId}.cs
 │   │   └── UnitOfWork/
 │   │       └── IUnitOfWork.cs
 │   │
@@ -331,7 +343,7 @@ eWatson/
 - **Specifications**: Encapsulate business rules using `ISpecification<T>` pattern
 - **Result Pattern**: Use `IResult` and `IResult<T>` for functional error handling instead of exceptions for expected failures
 - **Repository Pattern**: Repositories work only with aggregate roots (`IAggregateRoot`), not individual entities
-- **CQRS Separation**: Use `IRepository<T, TId>` for commands, `IReadOnlyRepository<T, TId>` for queries
+- **CQRS Separation**: Use `IWriteRepository<T>` for commands, `IReadRepository<T, TId>` for queries, or `IRepository<T, TId>` for combined operations
 
 ### Code Examples
 
@@ -480,14 +492,37 @@ Result<IEnumerable<Order>> combined = results.Combine();
 
 **Specification Pattern Usage:**
 ```csharp
-public class ActiveCustomerSpec : ISpecification<Customer>
+// Simple specification using base class
+public class ActiveCustomersSpec : Specification<Customer>
 {
-    public bool IsSatisfiedBy(Customer customer)
-        => customer.IsActive && !customer.IsDeleted;
+    public ActiveCustomersSpec()
+    {
+        AddCriteria(c => c.IsActive && !c.IsDeleted);
+        AddOrderBy(c => c.Name);
+        EnableNoTracking(); // Read-only optimization
+    }
+}
+
+// Advanced specification with includes and pagination
+public class CustomerOrdersSpec : Specification<Customer>
+{
+    public CustomerOrdersSpec(Guid customerId, int page = 1, int pageSize = 20)
+    {
+        AddCriteria(c => c.Id == customerId);
+        AddInclude(c => c.Orders); // Eager load orders
+        AddInclude("Orders.Items"); // Nested include
+        AddOrderBy(c => c.CreatedAt, descending: true);
+        ApplyPaging(page, pageSize);
+        EnableNoTracking();
+    }
 }
 
 // Usage with repository
 var activeCustomers = await _repository.FindAsync(
-    new ActiveCustomerSpec(),
+    new ActiveCustomersSpec(),
+    ct);
+
+var customerWithOrders = await _repository.FindAsync(
+    new CustomerOrdersSpec(customerId, page: 1, pageSize: 10),
     ct);
 ```

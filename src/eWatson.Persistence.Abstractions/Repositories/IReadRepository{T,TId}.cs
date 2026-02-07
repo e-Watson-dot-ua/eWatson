@@ -4,11 +4,12 @@ using eWatson.Abstractions.Specifications;
 namespace eWatson.Persistence.Abstractions.Repositories;
 
 /// <summary>
-/// Read-only repository interface for query operations.
+/// Read repository interface for query operations on aggregate roots.
+/// Provides read-only access for CQRS query handling.
 /// </summary>
 /// <typeparam name="T">The aggregate root type.</typeparam>
 /// <typeparam name="TId">The type of the aggregate identifier.</typeparam>
-public interface IReadOnlyRepository<T, TId>
+public interface IReadRepository<T, TId>
     where T : IAggregateRoot<TId>
     where TId : notnull, IEquatable<TId>
 {
@@ -26,7 +27,8 @@ public interface IReadOnlyRepository<T, TId>
     /// <param name="specification">The specification to match.</param>
     /// <param name="ct">Cancellation token.</param>
     /// <returns>A collection of aggregates matching the specification.</returns>
-    Task<IEnumerable<T>> FindAsync(ISpecification<T> specification, CancellationToken ct = default);
+    Task<IEnumerable<T>> FindAsync(ISpecification<T> specification,
+        CancellationToken ct = default);
 
     /// <summary>
     /// Counts aggregates matching the specification.
@@ -34,5 +36,6 @@ public interface IReadOnlyRepository<T, TId>
     /// <param name="specification">The specification to match.</param>
     /// <param name="ct">Cancellation token.</param>
     /// <returns>The count of aggregates matching the specification.</returns>
-    Task<int> CountAsync(ISpecification<T> specification, CancellationToken ct = default);
+    Task<int> CountAsync(ISpecification<T> specification,
+        CancellationToken ct = default);
 }

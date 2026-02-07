@@ -11,7 +11,10 @@ namespace eWatson.Entities;
 public abstract class AggregateRoot<TId> : Entity<TId>, IAggregateRoot<TId>
     where TId : notnull, IEquatable<TId>
 {
-    private readonly List<IDomainEvent> _domainEvents = new();
+    protected AggregateRoot() { }
+    protected AggregateRoot(TId id) : base(id) { }
+
+    private readonly List<IDomainEvent> _domainEvents = [];
 
     /// <summary>
     /// Gets the collection of domain events associated with this aggregate.

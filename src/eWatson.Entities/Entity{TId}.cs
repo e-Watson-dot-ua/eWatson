@@ -10,6 +10,9 @@ namespace eWatson.Entities;
 public abstract class Entity<TId> : IEntity<TId>
     where TId : notnull, IEquatable<TId>
 {
+    protected Entity() { }
+    protected Entity(TId id) => Id = id;
+
     /// <summary>
     /// Gets or initializes the unique identifier of the entity.
     /// </summary>

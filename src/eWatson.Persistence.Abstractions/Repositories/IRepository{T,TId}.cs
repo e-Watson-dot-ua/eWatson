@@ -3,22 +3,16 @@ using eWatson.Abstractions.Entities;
 namespace eWatson.Persistence.Abstractions.Repositories;
 
 /// <summary>
-/// Repository interface with strongly-typed identifier for aggregate roots.
+/// Full repository interface combining read and write operations.
+/// Extends both <see cref="IReadRepository{T, TId}"/> and
+/// <see cref="IWriteRepository{T}"/> for complete CRUD functionality.
 /// </summary>
 /// <typeparam name="T">The aggregate root type.</typeparam>
 /// <typeparam name="TId">The type of the aggregate identifier.</typeparam>
-public interface IRepository<T, TId> : IRepository<T>
+public interface IRepository<T, TId> : IReadRepository<T, TId>, IWriteRepository<T>
     where T : IAggregateRoot<TId>
     where TId : notnull, IEquatable<TId>
 {
-    /// <summary>
-    /// Retrieves an aggregate by its unique identifier.
-    /// </summary>
-    /// <param name="id">The aggregate identifier.</param>
-    /// <param name="ct">Cancellation token.</param>
-    /// <returns>The aggregate if found; otherwise, null.</returns>
-    Task<T?> GetByIdAsync(TId id, CancellationToken ct = default);
-
     /// <summary>
     /// Checks if an aggregate with the specified identifier exists.
     /// </summary>

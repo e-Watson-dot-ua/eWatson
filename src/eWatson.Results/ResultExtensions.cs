@@ -108,9 +108,7 @@ public static class ResultExtensions
     /// <typeparam name="T">The type of the result value.</typeparam>
     /// <param name="result">The result to tap.</param>
     /// <param name="action">The action to execute.</param>
-    public static Result<T> Tap<T>(
-        this Result<T> result,
-        Action<T> action)
+    public static Result<T> Tap<T>(this Result<T> result, Action<T> action)
     {
         if (result.IsSuccess)
         {
@@ -127,9 +125,7 @@ public static class ResultExtensions
     /// <typeparam name="T">The type of the result value.</typeparam>
     /// <param name="result">The result to tap.</param>
     /// <param name="action">The action to execute on failure.</param>
-    public static Result<T> TapError<T>(
-        this Result<T> result,
-        Action<string> action)
+    public static Result<T> TapError<T>(this Result<T> result, Action<string> action)
     {
         if (result.IsFailure)
         {
@@ -147,9 +143,7 @@ public static class ResultExtensions
     /// <param name="result">The result to validate.</param>
     /// <param name="predicate">The condition to check.</param>
     /// <param name="error">The error message if the condition fails.</param>
-    public static Result<T> Ensure<T>(
-        this Result<T> result,
-        Func<T, bool> predicate,
+    public static Result<T> Ensure<T>(this Result<T> result, Func<T, bool> predicate,
         string error)
     {
         if (result.IsFailure)
@@ -170,9 +164,7 @@ public static class ResultExtensions
     /// <param name="result">The result to validate.</param>
     /// <param name="predicate">The condition to check.</param>
     /// <param name="error">The detailed error if the condition fails.</param>
-    public static Result<T> Ensure<T>(
-        this Result<T> result,
-        Func<T, bool> predicate,
+    public static Result<T> Ensure<T>(this Result<T> result, Func<T, bool> predicate,
         Error error)
     {
         if (result.IsFailure)

@@ -1,59 +1,39 @@
 <Project>
-  <!-- Shared properties for all projects in the solution -->
 
   <PropertyGroup>
-    <!-- Target Framework -->
     <TargetFramework>net10.0</TargetFramework>
     <LangVersion>latest</LangVersion>
-
-    <!-- Nullable Reference Types -->
     <Nullable>enable</Nullable>
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <WarningsAsErrors>nullable</WarningsAsErrors>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
 
-    <!-- Package Metadata (applied to all projects) -->
-    <Authors>eWatson Team</Authors>
-    <Company>eWatson</Company>
-    <Product>eWatson</Product>
-    <Copyright>Copyright © 2026 eWatson</Copyright>
-    <PackageProjectUrl>https://github.com/e-Watson-dot-ua/eWatson</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/e-Watson-dot-ua/eWatson</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
+    <!-- Reproducible builds -->
+    <Deterministic>true</Deterministic>
+    <ContinuousIntegrationBuild Condition="'$(CI)' == 'true'">true</ContinuousIntegrationBuild>
 
-    <!-- Versioning -->
-    <Version>1.0.3</Version>
-    <AssemblyVersion>1.0.3.0</AssemblyVersion>
-    <FileVersion>1.0.3.0</FileVersion>
-
-    <!-- Build Output -->
+    <!-- XML documentation for NuGet package -->
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);CS1591</NoWarn>
 
-    <!-- Deterministic Build -->
-    <Deterministic>true</Deterministic>
-    <ContinuousIntegrationBuild Condition="'$(CI)' == 'true'">true</ContinuousIntegrationBuild>
-  </PropertyGroup>
-
-  <!-- NuGet Package Settings -->
-  <PropertyGroup>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <!-- Package defaults -->
+    <Authors>eWatson</Authors>
+    <Company>eWatson</Company>
+    <Copyright>Copyright © eWatson $([System.DateTime]::UtcNow.Year)</Copyright>
+    <RepositoryUrl>https://github.com/e-Watson-dot-ua/eWatson</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageProjectUrl>https://github.com/e-Watson-dot-ua/eWatson</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <!-- Only eWatson project should be packable (it will override this) -->
-    <IsPackable>false</IsPackable>
+    <PackageTags>ddd;cqrs;domain-events;result;value-objects;guards;specification;clean-architecture</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
-  <!-- Source Link (for debugging) -->
+  <!-- Central Package Management -->
   <PropertyGroup>
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
   </PropertyGroup>
-
-  <!-- Include README in all packages -->
-  <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)README.md" Pack="true" PackagePath="\" />
-  </ItemGroup>
 
 </Project>

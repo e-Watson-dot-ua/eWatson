@@ -17,7 +17,7 @@ public interface IResult
     bool IsFailure => !IsSuccess;
 
     /// <summary>
-    /// Gets the error message if the operation failed.
+    /// Gets the error message if the operation failed; otherwise <c>null</c>.
     /// </summary>
-    string? Error { get; }
+    string? ErrorMessage { get; }
 }

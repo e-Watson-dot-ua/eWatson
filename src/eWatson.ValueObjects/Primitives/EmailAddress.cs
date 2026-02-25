@@ -24,7 +24,7 @@ public sealed partial class EmailAddress : ValueObject
     /// <summary>
     /// Gets the email address value.
     /// </summary>
-    public string Value { get; }
+    private string Value { get; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="EmailAddress"/> class.

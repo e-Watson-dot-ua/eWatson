@@ -9,8 +9,6 @@ namespace eWatson.Results;
 /// <typeparam name="T">The type of the value returned on success.</typeparam>
 public class Result<T> : Result, IResult<T>
 {
-    private readonly T _value;
-
     /// <inheritdoc />
     public T Value
     {
@@ -19,10 +17,10 @@ public class Result<T> : Result, IResult<T>
             if (IsFailure)
             {
                 throw new InvalidOperationException(
-                    ResultMessages.CannotAccessValueOfFailedResult(Error!));
+                    ResultMessages.CannotAccessValueOfFailedResult(ErrorMessage!));
             }
 
-            return _value;
+            return field;
         }
     }
 
@@ -31,13 +29,13 @@ public class Result<T> : Result, IResult<T>
     /// </summary>
     /// <param name="value">The value if the operation succeeded.</param>
     /// <param name="isSuccess">Whether the operation succeeded.</param>
-    /// <param name="error">The error message if the operation failed.</param>
+    /// <param name="errorMessage">The error message if the operation failed.</param>
     /// <param name="errorDetails">Detailed error information.</param>
-    internal Result(T value, bool isSuccess, string? error,
-        Error? errorDetails = null)
-        : base(isSuccess, error, errorDetails)
+    internal Result(T value, bool isSuccess, string? errorMessage,
+        ResultError? errorDetails = null)
+        : base(isSuccess, errorMessage, errorDetails)
     {
-        _value = value;
+        Value = value;
     }
 
     /// <summary>
@@ -47,8 +45,8 @@ public class Result<T> : Result, IResult<T>
     public static implicit operator Result<T>(T value) => Success(value);
 
     /// <summary>
-    /// Implicitly converts an Error to a failure result.
+    /// Implicitly converts a ResultError to a failure result.
     /// </summary>
     /// <param name="error">The error to wrap in a failure result.</param>
-    public static implicit operator Result<T>(Error error) => Failure<T>(error);
+    public static implicit operator Result<T>(ResultError error) => Failure<T>(error);
 }

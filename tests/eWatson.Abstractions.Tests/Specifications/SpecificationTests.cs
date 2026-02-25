@@ -6,14 +6,14 @@ namespace eWatson.Abstractions.Tests.Specifications;
 
 public class SpecificationTests
 {
-    private class TestEntity
+    private sealed class TestEntity
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public bool IsActive { get; set; }
     }
 
-    private class TestSpecification : Specification<TestEntity>
+    private sealed class TestSpecification : Specification<TestEntity>
     {
         public TestSpecification(Expression<Func<TestEntity, bool>>? criteria = null)
         {

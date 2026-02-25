@@ -23,6 +23,13 @@ public interface ISpecification<T>
     IReadOnlyList<Include<T>> Includes { get; }
 
     /// <summary>
+    /// Gets the collection of string-based navigation property paths to eager load.
+    /// Used for multi-level includes that cannot be expressed as a single lambda
+    /// (e.g. <c>"Order.Items.Product"</c>).
+    /// </summary>
+    IReadOnlyList<string> IncludeStrings { get; }
+
+    /// <summary>
     /// Gets the collection of ordering expressions to apply to the query.
     /// Applied in the order they appear in the list.
     /// </summary>

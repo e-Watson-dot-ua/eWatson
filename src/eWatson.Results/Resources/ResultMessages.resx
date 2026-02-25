@@ -60,4 +60,8 @@
     <value>Access to this resource is forbidden</value>
     <comment>Default message for forbidden error.</comment>
   </data>
+  <data name="InternalError" xml:space="preserve">
+    <value>An unexpected internal error occurred</value>
+    <comment>Default message for internal/unexpected system errors.</comment>
+  </data>
 </root>

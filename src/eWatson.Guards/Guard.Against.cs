@@ -361,5 +361,49 @@ public static partial class Guard
                 throw new GuardException(message);
             }
         }
+
+        /// <summary>
+        /// Throws <see cref="GuardException"/> if the string exceeds the maximum length.
+        /// </summary>
+        /// <param name="argument">The string to check.</param>
+        /// <param name="maxLength">The maximum allowed length.</param>
+        /// <param name="parameterName">The name of the parameter being checked.</param>
+        /// <exception cref="GuardException">Thrown when the string exceeds the maximum length.</exception>
+        public static void StringTooLong(
+            string argument,
+            int maxLength,
+            [CallerArgumentExpression(nameof(argument))] string? parameterName = null)
+        {
+            if (argument.Length > maxLength)
+            {
+                throw new GuardException(
+                    GuardMessages.ParameterExceedsMaxLength(
+                        parameterName ?? "unknown",
+                        maxLength,
+                        argument.Length));
+            }
+        }
+
+        /// <summary>
+        /// Throws <see cref="GuardException"/> if the string is shorter than the minimum length.
+        /// </summary>
+        /// <param name="argument">The string to check.</param>
+        /// <param name="minLength">The minimum required length.</param>
+        /// <param name="parameterName">The name of the parameter being checked.</param>
+        /// <exception cref="GuardException">Thrown when the string is shorter than the minimum length.</exception>
+        public static void StringTooShort(
+            string argument,
+            int minLength,
+            [CallerArgumentExpression(nameof(argument))] string? parameterName = null)
+        {
+            if (argument.Length < minLength)
+            {
+                throw new GuardException(
+                    GuardMessages.ParameterBelowMinLength(
+                        parameterName ?? "unknown",
+                        minLength,
+                        argument.Length));
+            }
+        }
     }
 }

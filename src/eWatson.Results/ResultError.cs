@@ -3,9 +3,9 @@ using eWatson.Results.Resources;
 namespace eWatson.Results;
 
 /// <summary>
-/// Represents an error in the system with a code, message, and optional metadata.
+/// Represents a structured error with a code, message, and optional metadata.
 /// </summary>
-public sealed record Error
+public sealed record ResultError
 {
     /// <summary>
     /// Gets the error code that uniquely identifies this type of error.
@@ -23,12 +23,12 @@ public sealed record Error
     public IReadOnlyDictionary<string, object>? Metadata { get; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Error"/> class.
+    /// Initializes a new instance of the <see cref="ResultError"/> class.
     /// </summary>
     /// <param name="code">The error code.</param>
     /// <param name="message">The error message.</param>
     /// <param name="metadata">Optional metadata.</param>
-    public Error(string code, string message,
+    public ResultError(string code, string message,
         IReadOnlyDictionary<string, object>? metadata = null)
     {
         Code = code;
@@ -39,52 +39,60 @@ public sealed record Error
     /// <summary>
     /// Gets a general error instance.
     /// </summary>
-    public static Error General(string message) =>
+    public static ResultError General(string message) =>
         new("General.Error", message);
 
     /// <summary>
     /// Gets a validation error instance.
     /// </summary>
-    public static Error Validation(string message, string? field = null)
+    public static ResultError Validation(string message, string? field = null)
     {
         var metadata = field is not null
             ? new Dictionary<string, object> { ["Field"] = field }
             : null;
 
-        return new Error("Validation.Error", message, metadata);
+        return new ResultError("Validation.Error", message, metadata);
     }
 
     /// <summary>
     /// Gets a not found error instance.
     /// </summary>
-    public static Error NotFound(string message, string? entityName = null)
+    public static ResultError NotFound(string message, string? entityName = null)
     {
         var metadata = entityName is not null
             ? new Dictionary<string, object> { ["EntityName"] = entityName }
             : null;
 
-        return new Error("NotFound.Error", message, metadata);
+        return new ResultError("NotFound.Error", message, metadata);
     }
 
     /// <summary>
     /// Gets an unauthorized error instance.
     /// </summary>
-    public static Error Unauthorized(string? message = null) =>
+    public static ResultError Unauthorized(string? message = null) =>
         new("Authorization.Unauthorized",
             message ?? ResultMessages.UnauthorizedAccess());
 
     /// <summary>
     /// Gets a forbidden error instance.
     /// </summary>
-    public static Error Forbidden(string? message = null) =>
+    public static ResultError Forbidden(string? message = null) =>
         new("Authorization.Forbidden",
             message ?? ResultMessages.ForbiddenAccess());
 
     /// <summary>
     /// Gets a conflict error instance.
     /// </summary>
-    public static Error Conflict(string message) =>
+    public static ResultError Conflict(string message) =>
         new("Conflict.Error", message);
+
+    /// <summary>
+    /// Gets an internal/unexpected error instance.
+    /// Use this for unexpected system-level failures.
+    /// </summary>
+    public static ResultError Internal(string? message = null) =>
+        new("Internal.Error",
+            message ?? ResultMessages.InternalError());
 
     /// <summary>
     /// Returns the error message.

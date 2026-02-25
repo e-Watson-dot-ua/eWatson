@@ -7,7 +7,7 @@ public interface IHasConcurrencyToken
 {
     /// <summary>
     /// Gets the concurrency token used for optimistic concurrency checks.
-    /// Typically a row version or timestamp.
+    /// Typically, a row version or timestamp.
     /// </summary>
     byte[]? ConcurrencyToken { get; }
 }

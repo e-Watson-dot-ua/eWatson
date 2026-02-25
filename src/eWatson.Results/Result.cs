@@ -16,36 +16,36 @@ public class Result : IResult
     public bool IsFailure => !IsSuccess;
 
     /// <inheritdoc />
-    public string? Error { get; }
+    public string? ErrorMessage { get; }
 
     /// <summary>
     /// Gets the detailed error information if the operation failed.
     /// </summary>
-    public Results.Error? ErrorDetails { get; }
+    public ResultError? ErrorDetails { get; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Result"/> class.
     /// </summary>
     /// <param name="isSuccess">Whether the operation succeeded.</param>
-    /// <param name="error">The error message if the operation failed.</param>
+    /// <param name="errorMessage">The error message if the operation failed.</param>
     /// <param name="errorDetails">Detailed error information.</param>
-    protected Result(bool isSuccess, string? error,
-        Results.Error? errorDetails = null)
+    protected Result(bool isSuccess, string? errorMessage,
+        ResultError? errorDetails = null)
     {
-        if (isSuccess && error is not null)
+        if (isSuccess && errorMessage is not null)
         {
             throw new ArgumentException(
-                ResultMessages.SuccessResultCannotHaveError(), nameof(error));
+                ResultMessages.SuccessResultCannotHaveError(), nameof(errorMessage));
         }
 
-        if (!isSuccess && error is null)
+        if (!isSuccess && errorMessage is null)
         {
             throw new ArgumentException(
-                ResultMessages.FailureResultMustHaveError(), nameof(error));
+                ResultMessages.FailureResultMustHaveError(), nameof(errorMessage));
         }
 
         IsSuccess = isSuccess;
-        Error = error;
+        ErrorMessage = errorMessage;
         ErrorDetails = errorDetails;
     }
 
@@ -57,14 +57,14 @@ public class Result : IResult
     /// <summary>
     /// Creates a failure result with an error message.
     /// </summary>
-    /// <param name="error">The error message.</param>
-    public static Result Failure(string error) => new(false, error);
+    /// <param name="errorMessage">The error message.</param>
+    public static Result Failure(string errorMessage) => new(false, errorMessage);
 
     /// <summary>
     /// Creates a failure result with detailed error information.
     /// </summary>
     /// <param name="error">The detailed error information.</param>
-    public static Result Failure(Results.Error error) =>
+    public static Result Failure(ResultError error) =>
         new(false, error.Message, error);
 
     /// <summary>
@@ -78,14 +78,14 @@ public class Result : IResult
     /// Creates a failure result with a value type.
     /// </summary>
     /// <typeparam name="T">The type of the value.</typeparam>
-    /// <param name="error">The error message.</param>
-    public static Result<T> Failure<T>(string error) => new(default!, false, error);
+    /// <param name="errorMessage">The error message.</param>
+    public static Result<T> Failure<T>(string errorMessage) => new(default!, false, errorMessage);
 
     /// <summary>
     /// Creates a failure result with a value type and detailed error.
     /// </summary>
     /// <typeparam name="T">The type of the value.</typeparam>
     /// <param name="error">The detailed error information.</param>
-    public static Result<T> Failure<T>(Results.Error error) =>
+    public static Result<T> Failure<T>(ResultError error) =>
         new(default!, false, error.Message, error);
 }

@@ -10,6 +10,7 @@ namespace eWatson.Abstractions.Specifications;
 public abstract class Specification<T> : ISpecification<T>
 {
     private readonly List<Include<T>> _includes = [];
+    private readonly List<string> _includeStrings = [];
     private readonly List<OrderBy<T>> _orderings = [];
 
     /// <inheritdoc />
@@ -17,6 +18,9 @@ public abstract class Specification<T> : ISpecification<T>
 
     /// <inheritdoc />
     public IReadOnlyList<Include<T>> Includes => _includes.AsReadOnly();
+
+    /// <inheritdoc />
+    public IReadOnlyList<string> IncludeStrings => _includeStrings.AsReadOnly();
 
     /// <inheritdoc />
     public IReadOnlyList<OrderBy<T>> Orderings => _orderings.AsReadOnly();
@@ -49,17 +53,13 @@ public abstract class Specification<T> : ISpecification<T>
     }
 
     /// <summary>
-    /// Adds a string-based navigation property to eager load.
-    /// Useful for ThenInclude scenarios.
+    /// Adds a string-based navigation property path to eager load.
+    /// Supports multi-level paths (e.g. <c>"Order.Items.Product"</c>).
     /// </summary>
     /// <param name="includeString">The navigation property path as string.</param>
     protected void AddInclude(string includeString)
     {
-        var parameter = Expression.Parameter(typeof(T), "x");
-        var property = Expression.Property(parameter, includeString);
-        var lambda = Expression.Lambda<Func<T, object>>(
-            Expression.Convert(property, typeof(object)), parameter);
-        _includes.Add(new Include<T>(lambda));
+        _includeStrings.Add(includeString);
     }
 
     /// <summary>

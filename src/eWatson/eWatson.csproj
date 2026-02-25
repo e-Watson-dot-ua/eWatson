@@ -1,13 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
     <!-- This is the only packable project -->
     <IsPackable>true</IsPackable>
+    <PackageId>eWatson</PackageId>
+    <Version>1.0.4</Version>
     <PackageDescription>eWatson foundational domain building blocks for .NET applications. Includes entities, value objects, guards, results pattern, and persistence abstractions.</PackageDescription>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
   <ItemGroup>
     <!-- Include all project assemblies in the single package -->

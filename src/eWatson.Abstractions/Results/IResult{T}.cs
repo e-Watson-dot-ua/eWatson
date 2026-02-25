@@ -8,7 +8,11 @@ public interface IResult<out T> : IResult
 {
     /// <summary>
     /// Gets the value if the operation succeeded.
-    /// Throws if accessed when IsFailure is true.
     /// </summary>
+    /// <remarks>
+    /// Accessing this property when <see cref="IResult.IsFailure"/> is <c>true</c>
+    /// will throw an <see cref="InvalidOperationException"/> in the default implementation.
+    /// Always check <see cref="IResult.IsSuccess"/> before accessing.
+    /// </remarks>
     T Value { get; }
 }

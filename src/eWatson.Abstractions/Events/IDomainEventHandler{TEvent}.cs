@@ -3,8 +3,12 @@ namespace eWatson.Abstractions.Events;
 /// <summary>
 /// Handles a specific type of domain event.
 /// </summary>
+/// <remarks>
+/// Implement this interface to react to a domain event raised within the domain.
+/// Register implementations via your DI container.
+/// </remarks>
 /// <typeparam name="TEvent">The type of domain event to handle.</typeparam>
-public interface IDomainEventHandler<in TEvent> where TEvent : IDomainEvent
+public interface IDomainEventListener<in TEvent> where TEvent : IDomainEvent
 {
     /// <summary>
     /// Handles the specified domain event.

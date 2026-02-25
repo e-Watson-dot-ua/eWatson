@@ -1,27 +1,46 @@
 <Project>
+
+  <!--
+    Central Package Management (CPM)
+    https://learn.microsoft.com/en-us/nuget/consume-packages/central-package-management
+
+    Add shared package versions here. Projects reference packages without specifying a version.
+    Example project usage:
+      <PackageReference Include="Microsoft.Extensions.Logging" />
+  -->
+
   <PropertyGroup>
-    <!-- Enable Central Package Management -->
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
 
-  <ItemGroup>
-    <!-- Testing Framework -->
-    <PackageVersion Include="xunit" Version="2.9.0" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.11.0" />
-
-    <!-- Test Utilities -->
-    <PackageVersion Include="FluentAssertions" Version="6.12.0" />
-
-    <!-- Code Coverage -->
-    <PackageVersion Include="coverlet.collector" Version="6.0.2" />
+  <ItemGroup Label="Microsoft Extensions">
+    <PackageVersion Include="Microsoft.Extensions.Configuration" Version="10.0.3" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.3" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Binder" Version="10.0.3" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="10.0.3" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="10.0.3" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.3" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.3" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.3" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.3" />
+    <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.3" />
+    <PackageVersion Include="Microsoft.Extensions.Logging" Version="10.0.3" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.3" />
+    <PackageVersion Include="Microsoft.Extensions.Options" Version="10.0.3" />
+    <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.3" />
   </ItemGroup>
 
-  <!--
-    Notes:
-    - All package versions are managed here centrally
-    - Individual .csproj files reference packages WITHOUT version numbers
-    - Example: <PackageReference Include="xunit" /> (no Version attribute)
-    - To update a package version, change it here and all projects get the update
-  -->
+  <ItemGroup Label="ASP.NET Core">
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.3" />
+  </ItemGroup>
+
+  <ItemGroup Label="Testing">
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.3.0" />
+    <PackageVersion Include="xunit" Version="2.9.3" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
+    <PackageVersion Include="FluentAssertions" Version="8.8.0" />
+    <PackageVersion Include="NSubstitute" Version="5.3.0" />
+    <PackageVersion Include="coverlet.collector" Version="8.0.0" />
+  </ItemGroup>
+
 </Project>

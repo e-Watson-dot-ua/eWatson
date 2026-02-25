@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace eWatson.Results.Resources;
 
 /// <summary>
@@ -5,23 +7,25 @@ namespace eWatson.Results.Resources;
 /// </summary>
 internal static class ResultMessages
 {
-    private static readonly System.Resources.ResourceManager _rm =
-        new("eWatson.Results.Resources.ResultMessages",
-            typeof(ResultMessages).Assembly);
+    private static readonly System.Resources.ResourceManager Rm =
+        new(typeof(ResultMessages));
 
     public static string SuccessResultCannotHaveError()
-        => _rm.GetString("SuccessResultCannotHaveError")!;
+        => Rm.GetString("SuccessResultCannotHaveError", CultureInfo.InvariantCulture)!;
 
     public static string FailureResultMustHaveError()
-        => _rm.GetString("FailureResultMustHaveError")!;
+        => Rm.GetString("FailureResultMustHaveError", CultureInfo.InvariantCulture)!;
 
     public static string CannotAccessValueOfFailedResult(string error)
-        => string.Format(_rm.GetString("CannotAccessValueOfFailedResult")!,
-            error);
+        => string.Format(CultureInfo.InvariantCulture,
+            Rm.GetString("CannotAccessValueOfFailedResult", CultureInfo.InvariantCulture)!, error);
 
     public static string UnauthorizedAccess()
-        => _rm.GetString("UnauthorizedAccess")!;
+        => Rm.GetString("UnauthorizedAccess", CultureInfo.InvariantCulture)!;
 
     public static string ForbiddenAccess()
-        => _rm.GetString("ForbiddenAccess")!;
+        => Rm.GetString("ForbiddenAccess", CultureInfo.InvariantCulture)!;
+
+    public static string InternalError()
+        => Rm.GetString("InternalError", CultureInfo.InvariantCulture)!;
 }

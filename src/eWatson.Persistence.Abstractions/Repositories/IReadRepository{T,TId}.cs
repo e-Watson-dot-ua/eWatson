@@ -9,9 +9,9 @@ namespace eWatson.Persistence.Abstractions.Repositories;
 /// </summary>
 /// <typeparam name="T">The aggregate root type.</typeparam>
 /// <typeparam name="TId">The type of the aggregate identifier.</typeparam>
-public interface IReadRepository<T, TId>
+public interface IReadRepository<T, in TId>
     where T : IAggregateRoot<TId>
-    where TId : notnull, IEquatable<TId>
+    where TId : IEquatable<TId>
 {
     /// <summary>
     /// Retrieves an aggregate by its unique identifier.
@@ -37,5 +37,25 @@ public interface IReadRepository<T, TId>
     /// <param name="ct">Cancellation token.</param>
     /// <returns>The count of aggregates matching the specification.</returns>
     Task<int> CountAsync(ISpecification<T> specification,
+        CancellationToken ct = default);
+
+    /// <summary>
+    /// Determines whether any aggregate matches the specification.
+    /// More efficient than <see cref="CountAsync"/> when only existence is needed.
+    /// </summary>
+    /// <param name="specification">The specification to match.</param>
+    /// <param name="ct">Cancellation token.</param>
+    /// <returns><c>true</c> if at least one aggregate matches; otherwise, <c>false</c>.</returns>
+    Task<bool> AnyAsync(ISpecification<T> specification,
+        CancellationToken ct = default);
+
+    /// <summary>
+    /// Retrieves the first aggregate matching the specification, or <c>null</c>
+    /// if no match is found.
+    /// </summary>
+    /// <param name="specification">The specification to match.</param>
+    /// <param name="ct">Cancellation token.</param>
+    /// <returns>The first matching aggregate, or <c>null</c>.</returns>
+    Task<T?> FindFirstAsync(ISpecification<T> specification,
         CancellationToken ct = default);
 }

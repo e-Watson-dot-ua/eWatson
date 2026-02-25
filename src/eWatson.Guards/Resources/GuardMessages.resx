@@ -42,26 +42,42 @@
   </resheader>
   <data name="ParameterCannotBeNull" xml:space="preserve">
     <value>Parameter '{0}' cannot be null.</value>
+    <comment>{0}=parameterName. Thrown when a required argument is null.</comment>
   </data>
   <data name="ParameterCannotBeNullOrEmpty" xml:space="preserve">
     <value>Parameter '{0}' cannot be null or empty.</value>
+    <comment>{0}=parameterName. Thrown when a string or collection argument is null or empty.</comment>
   </data>
   <data name="ParameterCannotBeNullOrWhiteSpace" xml:space="preserve">
     <value>Parameter '{0}' cannot be null, empty, or whitespace.</value>
+    <comment>{0}=parameterName. Thrown when a string argument is null, empty, or whitespace-only.</comment>
   </data>
   <data name="ParameterCannotBeNegative" xml:space="preserve">
     <value>Parameter '{0}' cannot be negative. Value: {1}</value>
+    <comment>{0}=parameterName, {1}=actualValue. Thrown when a numeric argument is less than zero.</comment>
   </data>
   <data name="ParameterMustBeGreaterThanZero" xml:space="preserve">
     <value>Parameter '{0}' must be greater than zero. Value: {1}</value>
+    <comment>{0}=parameterName, {1}=actualValue. Thrown when a numeric argument is zero or negative.</comment>
   </data>
   <data name="ParameterMustBeBetween" xml:space="preserve">
     <value>Parameter '{0}' must be between {1} and {2}. Value: {3}</value>
+    <comment>{0}=parameterName, {1}=min, {2}=max, {3}=actualValue. Thrown when a numeric argument is out of the allowed range.</comment>
   </data>
   <data name="ParameterCannotBeValue" xml:space="preserve">
     <value>Parameter '{0}' cannot be '{1}'.</value>
+    <comment>{0}=parameterName, {1}=invalidValue. Thrown when an argument equals a specific disallowed value.</comment>
   </data>
   <data name="ParameterCannotBeEmptyGuid" xml:space="preserve">
     <value>Parameter '{0}' cannot be an empty Guid.</value>
+    <comment>{0}=parameterName. Thrown when a Guid argument equals Guid.Empty.</comment>
+  </data>
+  <data name="ParameterExceedsMaxLength" xml:space="preserve">
+    <value>Parameter '{0}' cannot exceed {1} characters. Actual length: {2}.</value>
+    <comment>{0}=parameterName, {1}=maxLength, {2}=actualLength. Thrown when a string exceeds the maximum allowed length.</comment>
+  </data>
+  <data name="ParameterBelowMinLength" xml:space="preserve">
+    <value>Parameter '{0}' must be at least {1} characters. Actual length: {2}.</value>
+    <comment>{0}=parameterName, {1}=minLength, {2}=actualLength. Thrown when a string is shorter than the minimum required length.</comment>
   </data>
 </root>

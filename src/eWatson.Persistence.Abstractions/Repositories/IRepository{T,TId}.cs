@@ -9,9 +9,9 @@ namespace eWatson.Persistence.Abstractions.Repositories;
 /// </summary>
 /// <typeparam name="T">The aggregate root type.</typeparam>
 /// <typeparam name="TId">The type of the aggregate identifier.</typeparam>
-public interface IRepository<T, TId> : IReadRepository<T, TId>, IWriteRepository<T>
+public interface IRepository<T, in TId> : IReadRepository<T, TId>, IWriteRepository<T>
     where T : IAggregateRoot<TId>
-    where TId : notnull, IEquatable<TId>
+    where TId : IEquatable<TId>
 {
     /// <summary>
     /// Checks if an aggregate with the specified identifier exists.

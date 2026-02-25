@@ -10,3 +10,4 @@ namespace eWatson.Abstractions.Specifications;
 /// <param name="Descending">If true, orders in descending order; otherwise ascending</param>
 public sealed record class OrderBy<T>(Expression<Func<T, object>> KeySelector,
     bool Descending = false);
+    

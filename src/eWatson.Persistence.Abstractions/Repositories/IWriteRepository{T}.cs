@@ -7,7 +7,7 @@ namespace eWatson.Persistence.Abstractions.Repositories;
 /// Provides add, update, and remove operations for CQRS command handling.
 /// </summary>
 /// <typeparam name="T">The aggregate root type.</typeparam>
-public interface IWriteRepository<T> where T : IAggregateRoot
+public interface IWriteRepository<in T> where T : IAggregateRoot
 {
     /// <summary>
     /// Adds a new aggregate to the repository.

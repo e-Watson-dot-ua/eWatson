@@ -74,7 +74,7 @@ public sealed class Mediator(IServiceProvider serviceProvider, MediatorOptions o
 
             default:
                 throw new InvalidOperationException(
-                    $"Notification publish strategy '{_options.PublishStrategy}' is not supported.");
+                    MediatorMessages.UnsupportedPublishStrategy(_options.PublishStrategy));
         }
     }
 

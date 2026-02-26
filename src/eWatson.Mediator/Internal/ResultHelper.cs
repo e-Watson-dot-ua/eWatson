@@ -1,3 +1,4 @@
+using eWatson.Mediator.Resources;
 using eWatson.Results;
 
 namespace eWatson.Mediator.Internal;
@@ -36,7 +37,6 @@ internal static class ResultHelper
         }
 
         throw new InvalidOperationException(
-            $"Response type '{typeof(TResponse).Name}' is not Result or Result<T> and cannot " +
-            "carry a failure. Ensure this behaviour is only applied to result-returning requests.");
+            MediatorMessages.UnsupportedResponseType(typeof(TResponse).Name));
     }
 }

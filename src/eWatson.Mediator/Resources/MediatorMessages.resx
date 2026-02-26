@@ -56,4 +56,12 @@
     <value>An unhandled exception occurred while processing request '{0}'.</value>
     <comment>Message used when exception-handling behaviour catches an unexpected exception.</comment>
   </data>
+  <data name="UnsupportedPublishStrategy" xml:space="preserve">
+    <value>Notification publish strategy '{0}' is not supported.</value>
+    <comment>Exception message when an unknown NotificationPublishStrategy value is encountered.</comment>
+  </data>
+  <data name="UnsupportedResponseType" xml:space="preserve">
+    <value>Response type '{0}' is not Result or Result&lt;T&gt; and cannot carry a failure. Ensure this behaviour is only applied to result-returning requests.</value>
+    <comment>Exception message when a pipeline behaviour tries to create a failure for a non-Result response type.</comment>
+  </data>
 </root>

@@ -25,4 +25,12 @@ internal static class MediatorMessages
     public static string UnhandledException(string requestTypeName)
         => string.Format(CultureInfo.InvariantCulture,
             Rm.GetString("UnhandledException", CultureInfo.InvariantCulture)!, requestTypeName);
+
+    public static string UnsupportedPublishStrategy(object strategy)
+        => string.Format(CultureInfo.InvariantCulture,
+            Rm.GetString("UnsupportedPublishStrategy", CultureInfo.InvariantCulture)!, strategy);
+
+    public static string UnsupportedResponseType(string responseTypeName)
+        => string.Format(CultureInfo.InvariantCulture,
+            Rm.GetString("UnsupportedResponseType", CultureInfo.InvariantCulture)!, responseTypeName);
 }

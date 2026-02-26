@@ -1,5 +1,7 @@
 ﻿using eWatson.Results;
+
 namespace eWatson.Mediator.Abstractions;
+
 /// <summary>
 /// Validates a request of type <typeparamref name="TRequest"/> before it reaches its handler.
 /// Register implementations in DI; the <c>ValidationBehavior</c> resolves all validators

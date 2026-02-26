@@ -1,4 +1,5 @@
 ﻿namespace eWatson.Mediator.Abstractions;
+
 /// <summary>
 /// Controls how the mediator dispatches a notification to multiple handlers.
 /// </summary>

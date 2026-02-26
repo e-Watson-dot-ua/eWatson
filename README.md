@@ -12,6 +12,8 @@ The eWatson package includes all the following components in a single package:
 - **Results** - Result pattern for functional error handling with rich error types
 - **Entities** - Entity and aggregate root base classes with domain event support
 - **ValueObjects** - Value object base classes and primitives (Email, PhoneNumber, Money, Percentage, URL, PostalCode, DateRange)
+- **Mediator** - In-process mediator for CQRS — commands, queries, and notifications with a composable pipeline
+- **Mediator.Persistence** - Unit-of-work pipeline behaviour that wraps commands in a database transaction
 
 ## Building
 
@@ -79,6 +81,117 @@ public class ActiveCustomersSpec : ISpecification<Customer>
 
 var customers = await _repository.FindAsync(new ActiveCustomersSpec());
 ```
+
+### Mediator Pattern (CQRS)
+
+In-process mediator for dispatching commands, queries, and notifications through a composable pipeline.
+
+#### Registration
+
+```csharp
+services.AddEWatsonMediator(
+    configure: o =>
+    {
+        o.EnableValidationBehavior = true;   // off by default
+        o.EnableLoggingBehavior    = true;   // on by default
+        o.EnableExceptionHandlingBehavior = true; // on by default
+        o.PublishStrategy = NotificationPublishStrategy.Sequential;
+    },
+    typeof(Program).Assembly);
+
+// Optional: wrap commands in a DB transaction (requires IUnitOfWork in DI)
+services.AddEWatsonMediatorUnitOfWork();
+```
+
+#### Commands
+
+Commands express intent to mutate state and always return `Result` or `Result<T>`.
+
+```csharp
+// Define
+public sealed record CreateOrderCommand(Guid CustomerId, decimal Total) : ICommand<Guid>;
+
+// Handle
+public sealed class CreateOrderHandler : ICommandHandler<CreateOrderCommand, Guid>
+{
+    public async Task<Result<Guid>> HandleAsync(CreateOrderCommand command, CancellationToken ct)
+    {
+        var order = Order.Create(command.CustomerId, command.Total);
+        await _repository.AddAsync(order, ct);
+        return order.Id;
+    }
+}
+
+// Dispatch
+Result<Guid> result = await _mediator.SendAsync(new CreateOrderCommand(customerId, total), ct);
+```
+
+#### Queries
+
+Queries are read-only and always return `Result<T>`.
+
+```csharp
+// Define
+public sealed record GetOrderQuery(Guid OrderId) : IQuery<OrderDto>;
+
+// Handle
+public sealed class GetOrderHandler : IQueryHandler<GetOrderQuery, OrderDto>
+{
+    public async Task<Result<OrderDto>> HandleAsync(GetOrderQuery query, CancellationToken ct)
+    {
+        var order = await _repository.GetByIdAsync(query.OrderId, ct);
+        return order is not null
+            ? new OrderDto(order)
+            : ResultError.NotFound($"Order {query.OrderId} not found", "Order");
+    }
+}
+
+// Dispatch
+Result<OrderDto> result = await _mediator.SendAsync(new GetOrderQuery(orderId), ct);
+```
+
+#### Notifications
+
+Notifications fan-out to zero or more handlers. Publish strategy is configured via `MediatorOptions.PublishStrategy`.
+
+```csharp
+// Define
+public sealed record OrderPlacedNotification(Guid OrderId) : INotification;
+
+// Handle (multiple handlers allowed)
+public sealed class SendConfirmationEmail : INotificationHandler<OrderPlacedNotification>
+{
+    public async Task HandleAsync(OrderPlacedNotification n, CancellationToken ct) { /* ... */ }
+}
+
+// Publish
+await _mediator.PublishAsync(new OrderPlacedNotification(orderId), ct);
+```
+
+#### Validation
+
+Implement `IRequestValidator<TRequest>` and enable `EnableValidationBehavior`. All validators for a request are resolved automatically and run before the handler.
+
+```csharp
+public sealed class CreateOrderValidator : IRequestValidator<CreateOrderCommand>
+{
+    public IReadOnlyList<ResultError> Validate(CreateOrderCommand command)
+    {
+        var errors = new List<ResultError>();
+        if (command.Total <= 0)
+            errors.Add(ResultError.Validation("Total must be greater than zero", "Total"));
+        return errors;
+    }
+}
+```
+
+#### Pipeline Execution Order
+
+```
+ExceptionHandling → Logging → Validation → UnitOfWork → Handler
+```
+
+Each layer is opt-in/opt-out via `MediatorOptions` at registration time.
 
 ## Documentation
 

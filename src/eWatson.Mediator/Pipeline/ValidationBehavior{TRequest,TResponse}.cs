@@ -18,20 +18,16 @@ namespace eWatson.Mediator.Pipeline;
 /// </remarks>
 /// <typeparam name="TRequest">The request type.</typeparam>
 /// <typeparam name="TResponse">The response type.</typeparam>
-public sealed class ValidationBehavior<TRequest, TResponse>
-    : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : notnull
+/// <remarks>
+/// Initializes a new instance of <see cref="ValidationBehavior{TRequest,TResponse}"/>.
+/// </remarks>
+/// <param name="serviceProvider">Used to resolve validators for the request type.</param>
+public sealed class ValidationBehavior<TRequest, TResponse>(IServiceProvider serviceProvider)
+    : IPipelineBehavior<TRequest, TResponse> where TRequest : notnull
 {
-    private readonly IEnumerable<IRequestValidator<TRequest>> _validators;
+    private readonly IEnumerable<IRequestValidator<TRequest>> _validators
+        = serviceProvider.GetServices<IRequestValidator<TRequest>>();
 
-    /// <summary>
-    /// Initializes a new instance of <see cref="ValidationBehavior{TRequest,TResponse}"/>.
-    /// </summary>
-    /// <param name="serviceProvider">Used to resolve validators for the request type.</param>
-    public ValidationBehavior(IServiceProvider serviceProvider)
-    {
-        _validators = serviceProvider.GetServices<IRequestValidator<TRequest>>();
-    }
 
     /// <inheritdoc/>
     public async Task<TResponse> HandleAsync(
@@ -47,6 +43,7 @@ public sealed class ValidationBehavior<TRequest, TResponse>
             return await continuation(ct).ConfigureAwait(false);
 
         var message = MediatorMessages.ValidationFailed(typeof(TRequest).Name, errors.Count);
+
         return ResultHelper.CreateFailure<TResponse>(ResultError.Validation(message));
     }
 }

@@ -1,8 +1,10 @@
 ﻿using System.Reflection;
 using eWatson.Mediator.Abstractions;
 using eWatson.Mediator.Pipeline;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Microsoft.Extensions.DependencyInjection;
+namespace eWatson.Mediator.Extensions;
+
 /// <summary>
 /// Extension methods for registering the eWatson Mediator in an
 /// <see cref="IServiceCollection"/>.
@@ -36,36 +38,37 @@ public static class MediatorServiceCollectionExtensions
     {
         var options = new MediatorOptions();
         configure?.Invoke(options);
+
         // Register options as singleton so Mediator can consume them.
         services.AddSingleton(options);
-        // Register the mediator itself as Scoped (one per DI scope / HTTP request).
-        services.AddScoped<IMediator, global::eWatson.Mediator.Mediator>();
+        services.AddScoped<IMediator, Mediator>();
+
         // Scan assemblies for handlers and validators.
         foreach (var assembly in assemblies)
+        {
             RegisterFromAssembly(services, assembly);
+        }
+
         // Register built-in pipeline behaviours in outer-to-inner order.
         // Behaviours are stored as IEnumerable<IPipelineBehavior<,>> — the mediator
         // retrieves them in registration order and reverses to build the chain.
         if (options.EnableExceptionHandlingBehavior)
-            services.AddTransient(
-                typeof(IPipelineBehavior<,>),
-                typeof(ExceptionHandlingBehavior<,>));
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ExceptionHandlingBehavior<,>));
+
         if (options.EnableLoggingBehavior)
         {
             // AddLogging() is idempotent — safe to call even when the host has
             // already configured a logging provider.
             services.AddLogging();
-            services.AddTransient(
-                typeof(IPipelineBehavior<,>),
-                typeof(LoggingBehavior<,>));
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
         }
+
         if (options.EnableValidationBehavior)
-            services.AddTransient(
-                typeof(IPipelineBehavior<,>),
-                typeof(ValidationBehavior<,>));
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+
         return services;
     }
-    // -------------------------------------------------------------------------
+
     private static void RegisterFromAssembly(IServiceCollection services, Assembly assembly)
     {
         var types = assembly.GetTypes()
@@ -77,16 +80,18 @@ public static class MediatorServiceCollectionExtensions
             RegisterHandlers(services, type, typeof(IRequestValidator<>));
         }
     }
+
     private static void RegisterHandlers(
         IServiceCollection services,
         Type implementationType,
         Type openGenericInterface)
     {
-        var interfaces = implementationType
-            .GetInterfaces()
-            .Where(i => i.IsGenericType &&
-                        i.GetGenericTypeDefinition() == openGenericInterface);
+        var interfaces = implementationType.GetInterfaces()
+            .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == openGenericInterface);
+
         foreach (var iface in interfaces)
+        {
             services.AddTransient(iface, implementationType);
+        }
     }
 }

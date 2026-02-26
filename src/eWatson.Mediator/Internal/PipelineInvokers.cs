@@ -12,18 +12,14 @@ internal interface IHandlerWrapper<TResponse>
     Task<TResponse> HandleAsync(IRequest<TResponse> request, CancellationToken ct);
 }
 
-internal sealed class HandlerWrapper<TRequest, TResponse> : IHandlerWrapper<TResponse>
-    where TRequest : IRequest<TResponse>
+internal sealed class HandlerWrapper<TRequest, TResponse>(IRequestHandler<TRequest, TResponse> handler)
+    : IHandlerWrapper<TResponse> where TRequest : IRequest<TResponse>
 {
-    private readonly IRequestHandler<TRequest, TResponse> _handler;
-
-    public HandlerWrapper(IRequestHandler<TRequest, TResponse> handler) => _handler = handler;
+    private readonly IRequestHandler<TRequest, TResponse> _handler = handler;
 
     public Task<TResponse> HandleAsync(IRequest<TResponse> request, CancellationToken ct)
         => _handler.HandleAsync((TRequest)request, ct);
 }
-
-// -------------------------------------------------------------------------
 
 /// <summary>
 /// Type-erases the concrete request type so <see cref="Mediator"/> can invoke
@@ -38,12 +34,10 @@ internal interface IBehaviorWrapper<TResponse>
         CancellationToken ct);
 }
 
-internal sealed class BehaviorWrapper<TRequest, TResponse> : IBehaviorWrapper<TResponse>
-    where TRequest : IRequest<TResponse>
+internal sealed class BehaviorWrapper<TRequest, TResponse>(IPipelineBehavior<TRequest, TResponse> behavior)
+    : IBehaviorWrapper<TResponse> where TRequest : IRequest<TResponse>
 {
-    private readonly IPipelineBehavior<TRequest, TResponse> _behavior;
-
-    public BehaviorWrapper(IPipelineBehavior<TRequest, TResponse> behavior) => _behavior = behavior;
+    private readonly IPipelineBehavior<TRequest, TResponse> _behavior = behavior;
 
     public Task<TResponse> HandleAsync(
         IRequest<TResponse> request,

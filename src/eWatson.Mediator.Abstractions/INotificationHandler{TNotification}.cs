@@ -1,4 +1,5 @@
 ﻿namespace eWatson.Mediator.Abstractions;
+
 /// <summary>
 /// Handles a mediator notification of type <typeparamref name="TNotification"/>.
 /// Multiple handlers for the same notification type are all invoked.

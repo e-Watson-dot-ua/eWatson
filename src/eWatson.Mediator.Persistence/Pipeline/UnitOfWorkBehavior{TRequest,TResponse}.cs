@@ -30,20 +30,15 @@ namespace eWatson.Mediator.Persistence.Pipeline;
 /// </remarks>
 /// <typeparam name="TRequest">The request type.</typeparam>
 /// <typeparam name="TResponse">The response type.</typeparam>
-public sealed class UnitOfWorkBehavior<TRequest, TResponse>
-    : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : notnull
+/// <remarks>
+/// Initializes a new instance of <see cref="UnitOfWorkBehavior{TRequest,TResponse}"/>.
+/// </remarks>
+/// <param name="unitOfWork">The unit of work to manage the transaction boundary.</param>
+public sealed class UnitOfWorkBehavior<TRequest, TResponse>(IUnitOfWork unitOfWork)
+    : IPipelineBehavior<TRequest, TResponse> where TRequest : notnull
 {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-    /// <summary>
-    /// Initializes a new instance of <see cref="UnitOfWorkBehavior{TRequest,TResponse}"/>.
-    /// </summary>
-    /// <param name="unitOfWork">The unit of work to manage the transaction boundary.</param>
-    public UnitOfWorkBehavior(IUnitOfWork unitOfWork)
-    {
-        _unitOfWork = unitOfWork;
-    }
     /// <inheritdoc/>
     public async Task<TResponse> HandleAsync(
         TRequest request,
@@ -54,6 +49,7 @@ public sealed class UnitOfWorkBehavior<TRequest, TResponse>
         // Queries that return plain values pass through unchanged.
         if (!typeof(IResult).IsAssignableFrom(typeof(TResponse)))
             return await continuation(ct).ConfigureAwait(false);
+
         await _unitOfWork.BeginTransactionAsync(ct).ConfigureAwait(false);
         TResponse response;
         try
@@ -74,10 +70,10 @@ public sealed class UnitOfWorkBehavior<TRequest, TResponse>
         {
             await RollbackAsync(ct).ConfigureAwait(false);
         }
+
         return response;
     }
+
     private async Task RollbackAsync(CancellationToken ct)
-    {
-        await _unitOfWork.RollbackTransactionAsync(ct).ConfigureAwait(false);
-    }
+        => await _unitOfWork.RollbackTransactionAsync(ct).ConfigureAwait(false);
 }

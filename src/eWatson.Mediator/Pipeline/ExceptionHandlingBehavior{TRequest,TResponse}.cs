@@ -18,8 +18,7 @@ namespace eWatson.Mediator.Pipeline;
 /// <typeparam name="TRequest">The request type.</typeparam>
 /// <typeparam name="TResponse">The response type.</typeparam>
 public sealed class ExceptionHandlingBehavior<TRequest, TResponse>
-    : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : notnull
+    : IPipelineBehavior<TRequest, TResponse> where TRequest : notnull
 {
     /// <inheritdoc/>
     public async Task<TResponse> HandleAsync(

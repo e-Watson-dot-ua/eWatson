@@ -1,4 +1,5 @@
 ﻿namespace eWatson.Mediator.Abstractions;
+
 /// <summary>
 /// Handles a request of type <typeparamref name="TRequest"/> and produces
 /// a response of type <typeparamref name="TResponse"/>.

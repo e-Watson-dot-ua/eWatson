@@ -1,4 +1,3 @@
-using eWatson.Abstractions.Results;
 using eWatson.Results;
 
 namespace eWatson.Mediator.Internal;

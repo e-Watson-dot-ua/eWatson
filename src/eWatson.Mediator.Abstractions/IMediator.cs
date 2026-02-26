@@ -1,4 +1,5 @@
 ﻿namespace eWatson.Mediator.Abstractions;
+
 /// <summary>
 /// Dispatches requests to their registered handlers through the configured pipeline.
 /// </summary>
@@ -14,6 +15,7 @@ public interface IMediator
     /// <returns>A task that resolves to the response.</returns>
     Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request,
         CancellationToken ct = default);
+
     /// <summary>
     /// Publishes a notification to all registered handlers in a fire-and-forget fan-out.
     /// Dispatch strategy (sequential, parallel, continue-on-exception) is controlled

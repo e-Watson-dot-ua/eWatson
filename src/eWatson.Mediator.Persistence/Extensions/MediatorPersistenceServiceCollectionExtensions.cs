@@ -1,7 +1,8 @@
 ﻿using eWatson.Mediator.Abstractions;
 using eWatson.Mediator.Persistence.Pipeline;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Microsoft.Extensions.DependencyInjection;
+namespace eWatson.Mediator.Persistence.Extensions;
 
 /// <summary>
 /// Extension methods for adding the Unit-of-Work pipeline behaviour to the
@@ -32,9 +33,8 @@ public static class MediatorPersistenceServiceCollectionExtensions
     public static IServiceCollection AddEWatsonMediatorUnitOfWork(
         this IServiceCollection services)
     {
-        services.AddTransient(
-            typeof(IPipelineBehavior<,>),
-            typeof(UnitOfWorkBehavior<,>));
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnitOfWorkBehavior<,>));
+
         return services;
     }
 }

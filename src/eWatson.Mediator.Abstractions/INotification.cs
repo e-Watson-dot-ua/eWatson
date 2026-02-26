@@ -1,4 +1,5 @@
 ﻿namespace eWatson.Mediator.Abstractions;
+
 /// <summary>
 /// Marker interface for a mediator notification.
 /// Notifications are dispatched to zero or more handlers in a fan-out manner
@@ -17,6 +18,4 @@
 /// fan-out is required after a domain event is handled.
 /// </para>
 /// </remarks>
-public interface INotification
-{
-}
+public interface INotification { }

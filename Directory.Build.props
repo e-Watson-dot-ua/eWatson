@@ -16,7 +16,7 @@
 
     <!-- XML documentation for NuGet package -->
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <NoWarn>$(NoWarn);CS1591;NU1900</NoWarn>
 
     <!-- Package defaults -->
     <Authors>eWatson</Authors>

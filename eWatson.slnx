@@ -7,9 +7,13 @@
     <Project Path="src/eWatson.Guards/eWatson.Guards.csproj" />
     <Project Path="src/eWatson.ValueObjects/eWatson.ValueObjects.csproj" />
     <Project Path="src/eWatson/eWatson.csproj" />
+    <Project Path="src/eWatson.Mediator.Abstractions/eWatson.Mediator.Abstractions.csproj" />
+    <Project Path="src/eWatson.Mediator/eWatson.Mediator.csproj" />
+    <Project Path="src/eWatson.Mediator.Persistence/eWatson.Mediator.Persistence.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/eWatson.Abstractions.Tests/eWatson.Abstractions.Tests.csproj" />
     <Project Path="tests/eWatson.Guards.Tests/eWatson.Guards.Tests.csproj" />
+    <Project Path="tests/eWatson.Mediator.Tests/eWatson.Mediator.Tests.csproj" />
   </Folder>
 </Solution>

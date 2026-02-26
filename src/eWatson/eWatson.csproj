@@ -20,6 +20,9 @@
     <ProjectReference Include="..\eWatson.Entities\eWatson.Entities.csproj" PrivateAssets="All" />
     <ProjectReference Include="..\eWatson.Guards\eWatson.Guards.csproj" PrivateAssets="All" />
     <ProjectReference Include="..\eWatson.ValueObjects\eWatson.ValueObjects.csproj" PrivateAssets="All" />
+    <ProjectReference Include="..\eWatson.Mediator.Abstractions\eWatson.Mediator.Abstractions.csproj" PrivateAssets="All" />
+    <ProjectReference Include="..\eWatson.Mediator\eWatson.Mediator.csproj" PrivateAssets="All" />
+    <ProjectReference Include="..\eWatson.Mediator.Persistence\eWatson.Mediator.Persistence.csproj" PrivateAssets="All" />
   </ItemGroup>
 
   <!-- Include all referenced project DLLs and XML docs in the package -->
@@ -36,6 +39,9 @@
       <BuildOutputInPackage Include="$(OutputPath)eWatson.Results.dll" />
       <BuildOutputInPackage Include="$(OutputPath)eWatson.Entities.dll" />
       <BuildOutputInPackage Include="$(OutputPath)eWatson.ValueObjects.dll" />
+      <BuildOutputInPackage Include="$(OutputPath)eWatson.Mediator.Abstractions.dll" />
+      <BuildOutputInPackage Include="$(OutputPath)eWatson.Mediator.dll" />
+      <BuildOutputInPackage Include="$(OutputPath)eWatson.Mediator.Persistence.dll" />
       <!-- Include XML documentation files -->
       <BuildOutputInPackage Include="$(OutputPath)eWatson.Abstractions.xml" />
       <BuildOutputInPackage Include="$(OutputPath)eWatson.Persistence.Abstractions.xml" />
@@ -43,6 +49,9 @@
       <BuildOutputInPackage Include="$(OutputPath)eWatson.Results.xml" />
       <BuildOutputInPackage Include="$(OutputPath)eWatson.Entities.xml" />
       <BuildOutputInPackage Include="$(OutputPath)eWatson.ValueObjects.xml" />
+      <BuildOutputInPackage Include="$(OutputPath)eWatson.Mediator.Abstractions.xml" />
+      <BuildOutputInPackage Include="$(OutputPath)eWatson.Mediator.xml" />
+      <BuildOutputInPackage Include="$(OutputPath)eWatson.Mediator.Persistence.xml" />
     </ItemGroup>
   </Target>
 

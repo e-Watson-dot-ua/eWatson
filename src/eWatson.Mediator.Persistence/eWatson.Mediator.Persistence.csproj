@@ -1,0 +1,10 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\eWatson.Mediator.Abstractions\eWatson.Mediator.Abstractions.csproj" />
+    <ProjectReference Include="..\eWatson.Persistence.Abstractions\eWatson.Persistence.Abstractions.csproj" />
+    <ProjectReference Include="..\eWatson.Results\eWatson.Results.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+  </ItemGroup>
+</Project>

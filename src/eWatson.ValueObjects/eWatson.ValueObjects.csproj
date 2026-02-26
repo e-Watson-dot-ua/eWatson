@@ -5,5 +5,4 @@
     <ProjectReference Include="..\eWatson.Guards\eWatson.Guards.csproj" />
   </ItemGroup>
 
-
 </Project>

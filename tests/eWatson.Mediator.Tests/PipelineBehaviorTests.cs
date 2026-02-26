@@ -156,11 +156,11 @@ file sealed class RecordingBehavior<TRequest, TResponse>
     }
     public async Task<TResponse> HandleAsync(
         TRequest request,
-        RequestHandlerDelegate<TResponse> next,
+        RequestContinuation<TResponse> continuation,
         CancellationToken ct = default)
     {
         _log.Add($"{_tag}:before");
-        var result = await next(ct);
+        var result = await continuation(ct);
         _log.Add($"{_tag}:after");
         return result;
     }

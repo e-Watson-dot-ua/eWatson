@@ -1,8 +1,8 @@
 ﻿using System.Reflection;
 using eWatson.Mediator.Abstractions;
 using eWatson.Mediator.Pipeline;
-using Microsoft.Extensions.DependencyInjection;
-namespace eWatson.Mediator.Extensions;
+
+namespace Microsoft.Extensions.DependencyInjection;
 /// <summary>
 /// Extension methods for registering the eWatson Mediator in an
 /// <see cref="IServiceCollection"/>.
@@ -51,9 +51,14 @@ public static class MediatorServiceCollectionExtensions
                 typeof(IPipelineBehavior<,>),
                 typeof(ExceptionHandlingBehavior<,>));
         if (options.EnableLoggingBehavior)
+        {
+            // AddLogging() is idempotent — safe to call even when the host has
+            // already configured a logging provider.
+            services.AddLogging();
             services.AddTransient(
                 typeof(IPipelineBehavior<,>),
                 typeof(LoggingBehavior<,>));
+        }
         if (options.EnableValidationBehavior)
             services.AddTransient(
                 typeof(IPipelineBehavior<,>),

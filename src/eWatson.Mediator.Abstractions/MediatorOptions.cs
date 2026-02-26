@@ -1,33 +1,37 @@
 ﻿namespace eWatson.Mediator.Abstractions;
+
 /// <summary>
 /// Configuration options for the mediator, applied during DI registration
 /// via <c>AddEWatsonMediator</c>.
 /// </summary>
-public sealed record MediatorOptions
+public sealed class MediatorOptions
 {
     /// <summary>
-    /// Gets the strategy used when publishing a notification to multiple handlers.
+    /// Gets or sets the strategy used when publishing a notification to multiple handlers.
     /// Defaults to <see cref="NotificationPublishStrategy.Sequential"/>.
     /// </summary>
-    public NotificationPublishStrategy PublishStrategy { get; init; } =
+    public NotificationPublishStrategy PublishStrategy { get; set; } =
         NotificationPublishStrategy.Sequential;
+
     /// <summary>
-    /// Gets a value indicating whether the built-in exception-handling behaviour
+    /// Gets or sets a value indicating whether the built-in exception-handling behaviour
     /// is registered. When <see langword="true"/>, unhandled exceptions from handlers
     /// are caught and converted to a failure <c>Result</c>.
     /// Defaults to <see langword="true"/>.
     /// </summary>
-    public bool EnableExceptionHandlingBehavior { get; init; } = true;
+    public bool EnableExceptionHandlingBehavior { get; set; } = true;
+
     /// <summary>
-    /// Gets a value indicating whether the built-in logging behaviour is registered.
+    /// Gets or sets a value indicating whether the built-in logging behaviour is registered.
     /// Defaults to <see langword="true"/>.
     /// </summary>
-    public bool EnableLoggingBehavior { get; init; } = true;
+    public bool EnableLoggingBehavior { get; set; } = true;
+
     /// <summary>
-    /// Gets a value indicating whether the built-in validation behaviour is registered.
+    /// Gets or sets a value indicating whether the built-in validation behaviour is registered.
     /// When <see langword="true"/>, all <c>IRequestValidator&lt;TRequest&gt;</c>
     /// implementations registered in DI are executed before the handler.
     /// Defaults to <see langword="false"/>.
     /// </summary>
-    public bool EnableValidationBehavior { get; init; } = false;
+    public bool EnableValidationBehavior { get; set; }
 }

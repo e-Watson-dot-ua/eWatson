@@ -1,7 +1,8 @@
 ﻿using eWatson.Mediator.Abstractions;
 using eWatson.Mediator.Persistence.Pipeline;
-using Microsoft.Extensions.DependencyInjection;
-namespace eWatson.Mediator.Persistence.Extensions;
+
+namespace Microsoft.Extensions.DependencyInjection;
+
 /// <summary>
 /// Extension methods for adding the Unit-of-Work pipeline behaviour to the
 /// eWatson Mediator.

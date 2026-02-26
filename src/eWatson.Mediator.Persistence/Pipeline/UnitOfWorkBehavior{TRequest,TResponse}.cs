@@ -3,6 +3,7 @@ using eWatson.Mediator.Abstractions;
 using eWatson.Persistence.Abstractions.UnitOfWork;
 
 namespace eWatson.Mediator.Persistence.Pipeline;
+
 /// <summary>
 /// Pipeline behaviour that wraps command execution in a database transaction.
 /// </summary>
@@ -34,6 +35,7 @@ public sealed class UnitOfWorkBehavior<TRequest, TResponse>
     where TRequest : notnull
 {
     private readonly IUnitOfWork _unitOfWork;
+
     /// <summary>
     /// Initializes a new instance of <see cref="UnitOfWorkBehavior{TRequest,TResponse}"/>.
     /// </summary>
@@ -45,18 +47,18 @@ public sealed class UnitOfWorkBehavior<TRequest, TResponse>
     /// <inheritdoc/>
     public async Task<TResponse> HandleAsync(
         TRequest request,
-        RequestHandlerDelegate<TResponse> next,
+        RequestContinuation<TResponse> continuation,
         CancellationToken ct = default)
     {
         // Only manage a transaction when the response is a Result type.
         // Queries that return plain values pass through unchanged.
         if (!typeof(IResult).IsAssignableFrom(typeof(TResponse)))
-            return await next(ct).ConfigureAwait(false);
+            return await continuation(ct).ConfigureAwait(false);
         await _unitOfWork.BeginTransactionAsync(ct).ConfigureAwait(false);
         TResponse response;
         try
         {
-            response = await next(ct).ConfigureAwait(false);
+            response = await continuation(ct).ConfigureAwait(false);
         }
         catch
         {

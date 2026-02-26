@@ -11,7 +11,7 @@ public enum NotificationPublishStrategy
     /// </summary>
     Sequential = 0,
     /// <summary>
-    /// All handlers are invoked concurrently via <see cref="System.Threading.Tasks.Task.WhenAll"/>.
+    /// All handlers are invoked concurrently via <c>Task.WhenAll</c>.
     /// All exceptions are collected and re-thrown as an <see cref="System.AggregateException"/>.
     /// </summary>
     Parallel = 1,

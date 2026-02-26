@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace eWatson.Mediator.Pipeline;
 
 /// <summary>
-/// Pipeline behaviour that runs all registered <see cref="IRequestValidator{TRequest}"/>
+/// Pipeline behavior that runs all registered <see cref="IRequestValidator{TRequest}"/>
 /// implementations and short-circuits the pipeline with a validation failure result
 /// when any errors are found.
 /// </summary>

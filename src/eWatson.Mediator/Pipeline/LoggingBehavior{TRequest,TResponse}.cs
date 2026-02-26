@@ -6,7 +6,7 @@ using System.Diagnostics;
 namespace eWatson.Mediator.Pipeline;
 
 /// <summary>
-/// Pipeline behaviour that logs the request name, elapsed time, and outcome.
+/// Pipeline behavior that logs the request name, elapsed time, and outcome.
 /// Logs at <see cref="LogLevel.Information"/> on success and
 /// <see cref="LogLevel.Warning"/> on failure.
 /// </summary>

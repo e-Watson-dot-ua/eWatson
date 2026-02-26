@@ -32,8 +32,7 @@ public class Result<T> : Result, IResult<T>
     /// <param name="errorMessage">The error message if the operation failed.</param>
     /// <param name="errorDetails">Detailed error information.</param>
     internal Result(T value, bool isSuccess, string? errorMessage,
-        ResultError? errorDetails = null)
-        : base(isSuccess, errorMessage, errorDetails)
+        ResultError? errorDetails = null) : base(isSuccess, errorMessage, errorDetails)
     {
         Value = value;
     }

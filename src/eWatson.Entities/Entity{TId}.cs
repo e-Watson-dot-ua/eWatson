@@ -8,7 +8,7 @@ namespace eWatson.Entities;
 /// </summary>
 /// <typeparam name="TId">The type of the entity's unique identifier.</typeparam>
 public abstract class Entity<TId> : IEntity<TId>
-    where TId : notnull, IEquatable<TId>
+    where TId : IEquatable<TId>
 {
     protected Entity() { }
     protected Entity(TId id) => Id = id;
@@ -76,8 +76,8 @@ public abstract class Entity<TId> : IEntity<TId>
     /// An entity is transient if its ID equals the default value.
     /// </summary>
     /// <returns>True if the entity is transient; otherwise, false.</returns>
-    protected bool IsTransient()
+    private bool IsTransient()
     {
-        return Id.Equals(default(TId));
+        return Id.Equals(default);
     }
 }

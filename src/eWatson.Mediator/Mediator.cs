@@ -7,14 +7,14 @@ namespace eWatson.Mediator;
 
 /// <summary>
 /// Default implementation of <see cref="IMediator"/>.
-/// Resolves handlers and pipeline behaviours from <see cref="IServiceProvider"/>
+/// Resolves handlers and pipeline behaviors from <see cref="IServiceProvider"/>
 /// and composes them into an ordered delegate chain at dispatch time.
 /// </summary>
 /// <param name="serviceProvider">The DI service provider.</param>
 /// <param name="options">Mediator configuration options.</param>
-public sealed class Mediator(IServiceProvider serviceProvider, MediatorOptions options) : IMediator
+public sealed class Mediator(IServiceProvider serviceProvider, MediatorOptions options)
+    : IMediator
 {
-    private readonly IServiceProvider _serviceProvider = serviceProvider;
     private readonly MediatorOptions _options = options;
 
     /// <inheritdoc/>
@@ -39,7 +39,7 @@ public sealed class Mediator(IServiceProvider serviceProvider, MediatorOptions o
     {
         ArgumentNullException.ThrowIfNull(notification);
 
-        var handlers = _serviceProvider.GetServices<INotificationHandler<TNotification>>();
+        var handlers = serviceProvider.GetServices<INotificationHandler<TNotification>>();
 
         switch (_options.PublishStrategy)
         {
@@ -68,6 +68,7 @@ public sealed class Mediator(IServiceProvider serviceProvider, MediatorOptions o
                         exceptions.Add(ex);
                     }
                 }
+
                 if (exceptions.Count > 0)
                     throw new AggregateException(exceptions);
                 break;
@@ -78,8 +79,6 @@ public sealed class Mediator(IServiceProvider serviceProvider, MediatorOptions o
         }
     }
 
-    // -------------------------------------------------------------------------
-
     /// <summary>
     /// Resolves the registered handler for <paramref name="requestType"/> and wraps it in a
     /// type-erased delegate so it can be called without dynamic dispatch.
@@ -89,7 +88,7 @@ public sealed class Mediator(IServiceProvider serviceProvider, MediatorOptions o
         Type requestType)
     {
         var handlerType = typeof(IRequestHandler<,>).MakeGenericType(requestType, typeof(TResponse));
-        var handlerService = _serviceProvider.GetService(handlerType)
+        var handlerService = serviceProvider.GetService(handlerType)
             ?? throw new InvalidOperationException(
                 MediatorMessages.HandlerNotFound(requestType.Name));
 
@@ -100,8 +99,8 @@ public sealed class Mediator(IServiceProvider serviceProvider, MediatorOptions o
     }
 
     /// <summary>
-    /// Resolves all registered pipeline behaviours for <paramref name="requestType"/> and folds
-    /// them around <paramref name="terminal"/>. The first registered behaviour becomes
+    /// Resolves all registered pipeline behaviors for <paramref name="requestType"/> and folds
+    /// them around <paramref name="terminal"/>. The first registered behavior becomes
     /// the outermost wrapper.
     /// </summary>
     private RequestContinuation<TResponse> BuildPipeline<TResponse>(
@@ -110,7 +109,7 @@ public sealed class Mediator(IServiceProvider serviceProvider, MediatorOptions o
         RequestContinuation<TResponse> terminal)
     {
         var behaviorType = typeof(IPipelineBehavior<,>).MakeGenericType(requestType, typeof(TResponse));
-        var behaviors = (IEnumerable<object>)(_serviceProvider.GetService(
+        var behaviors = (IEnumerable<object>)(serviceProvider.GetService(
             typeof(IEnumerable<>).MakeGenericType(behaviorType)) ?? Array.Empty<object>());
 
         var wrapperType = typeof(BehaviorWrapper<,>).MakeGenericType(requestType, typeof(TResponse));

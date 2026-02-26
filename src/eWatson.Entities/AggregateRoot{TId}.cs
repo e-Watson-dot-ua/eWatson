@@ -9,7 +9,7 @@ namespace eWatson.Entities;
 /// </summary>
 /// <typeparam name="TId">The type of the aggregate's unique identifier.</typeparam>
 public abstract class AggregateRoot<TId> : Entity<TId>, IAggregateRoot<TId>
-    where TId : notnull, IEquatable<TId>
+    where TId : IEquatable<TId>
 {
     protected AggregateRoot() { }
     protected AggregateRoot(TId id) : base(id) { }

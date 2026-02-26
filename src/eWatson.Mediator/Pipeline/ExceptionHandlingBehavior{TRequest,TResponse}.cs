@@ -7,13 +7,13 @@ using eWatson.Results;
 namespace eWatson.Mediator.Pipeline;
 
 /// <summary>
-/// Outermost pipeline behaviour that catches any unhandled exception thrown by inner
-/// behaviours or the handler and converts it to a failure <see cref="Result"/>.
+/// Outermost pipeline behavior that catches any unhandled exception thrown by inner
+/// behaviors or the handler and converts it to a failure <see cref="Result"/>.
 /// </summary>
 /// <remarks>
 /// Only converts the exception when <typeparamref name="TResponse"/> implements
 /// <see cref="IResult"/>. For non-Result responses the exception is re-thrown.
-/// Register this as the <em>outermost</em> behaviour so it guards the entire pipeline.
+/// Register this as the <em>outermost</em> behavior so it guards the entire pipeline.
 /// </remarks>
 /// <typeparam name="TRequest">The request type.</typeparam>
 /// <typeparam name="TResponse">The response type.</typeparam>

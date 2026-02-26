@@ -25,18 +25,15 @@ internal static class ResultHelper
         if (typeof(TResponse) == typeof(Result))
             return (TResponse)(object)Result.Failure(error);
 
-        if (typeof(TResponse).IsGenericType &&
-            typeof(TResponse).GetGenericTypeDefinition() == typeof(Result<>))
-        {
-            var valueType = typeof(TResponse).GetGenericArguments()[0];
-            var failureMethod = typeof(Result)
-                .GetMethod(nameof(Result.Failure), 1, [typeof(ResultError)])!
-                .MakeGenericMethod(valueType);
+        if (!typeof(TResponse).IsGenericType || typeof(TResponse).GetGenericTypeDefinition() != typeof(Result<>))
+            throw new InvalidOperationException(
+                MediatorMessages.UnsupportedResponseType(typeof(TResponse).Name));
 
-            return (TResponse)failureMethod.Invoke(null, [error])!;
-        }
+        var valueType = typeof(TResponse).GetGenericArguments()[0];
+        var failureMethod = typeof(Result)
+            .GetMethod(nameof(Result.Failure), 1, [typeof(ResultError)])!
+            .MakeGenericMethod(valueType);
 
-        throw new InvalidOperationException(
-            MediatorMessages.UnsupportedResponseType(typeof(TResponse).Name));
+        return (TResponse)failureMethod.Invoke(null, [error])!;
     }
 }

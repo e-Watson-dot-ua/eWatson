@@ -14,6 +14,4 @@ namespace eWatson.Abstractions.ValueObjects;
 /// <item>Self-Validating - validate invariants on construction</item>
 /// </list>
 /// </remarks>
-public interface IValueObject
-{
-}
+public interface IValueObject { }

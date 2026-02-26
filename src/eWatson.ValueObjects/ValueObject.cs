@@ -70,13 +70,10 @@ public abstract class ValueObject : IValueObject, IEquatable<ValueObject>
     {
         return GetEqualityComponents()
             .Aggregate(
-                default(int),
-                (hashCode, component) =>
-                {
-                    return HashCode.Combine(
-                        hashCode,
-                        component?.GetHashCode() ?? 0);
-                });
+                0,
+                (hashCode, component) => HashCode.Combine(
+                    hashCode,
+                    component?.GetHashCode() ?? 0));
     }
 
     /// <summary>

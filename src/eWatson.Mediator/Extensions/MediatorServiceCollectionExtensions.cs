@@ -49,8 +49,8 @@ public static class MediatorServiceCollectionExtensions
             RegisterFromAssembly(services, assembly);
         }
 
-        // Register built-in pipeline behaviours in outer-to-inner order.
-        // Behaviours are stored as IEnumerable<IPipelineBehavior<,>> — the mediator
+        // Register built-in pipeline behaviors in outer-to-inner order.
+        // Behaviors are stored as IEnumerable<IPipelineBehavior<,>> — the mediator
         // retrieves them in registration order and reverses to build the chain.
         if (options.EnableExceptionHandlingBehavior)
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ExceptionHandlingBehavior<,>));
@@ -89,9 +89,9 @@ public static class MediatorServiceCollectionExtensions
         var interfaces = implementationType.GetInterfaces()
             .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == openGenericInterface);
 
-        foreach (var iface in interfaces)
+        foreach (var ifc in interfaces)
         {
-            services.AddTransient(iface, implementationType);
+            services.AddTransient(ifc, implementationType);
         }
     }
 }

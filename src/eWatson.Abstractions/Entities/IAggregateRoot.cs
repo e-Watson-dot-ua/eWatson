@@ -5,6 +5,4 @@ namespace eWatson.Abstractions.Entities;
 /// Aggregate roots are the only entities that can raise domain events
 /// and serve as the consistency boundary for business invariants.
 /// </summary>
-public interface IAggregateRoot : IEntity, IHasDomainEvents
-{
-}
+public interface IAggregateRoot : IEntity, IHasDomainEvents { }

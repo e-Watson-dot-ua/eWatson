@@ -78,6 +78,10 @@
   </data>
   <data name="ParameterBelowMinLength" xml:space="preserve">
     <value>Parameter '{0}' must be at least {1} characters. Actual length: {2}.</value>
-    <comment>{0}=parameterName, {1}=minLength, {2}=actualLength. Thrown when a string is shorter than the minimum required length.</comment>
+    <comment>{0}=parameterName, {1}=minLength, {2}=actualLength. Thrown when a string is shorter than the minimum allowed length.</comment>
+  </data>
+  <data name="UnknownParameter" xml:space="preserve">
+    <value>unknown</value>
+    <comment>Fallback parameter name used when CallerArgumentExpression resolves to null.</comment>
   </data>
 </root>

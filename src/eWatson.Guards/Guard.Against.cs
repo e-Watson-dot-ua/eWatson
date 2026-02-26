@@ -12,6 +12,8 @@ public static partial class Guard
     /// </summary>
     public static class Against
     {
+        private static string Unknown => GuardMessages.UnknownParameter;
+
         /// <summary>
         /// Throws <see cref="GuardException"/> if the argument is null.
         /// </summary>
@@ -26,7 +28,7 @@ public static partial class Guard
             if (argument is null)
             {
                 throw new GuardException(
-                    GuardMessages.ParameterCannotBeNull(parameterName ?? "unknown"));
+                    GuardMessages.ParameterCannotBeNull(parameterName ?? Unknown));
             }
         }
 
@@ -46,7 +48,7 @@ public static partial class Guard
             {
                 throw new GuardException(
                     GuardMessages.ParameterCannotBeNullOrEmpty(
-                        parameterName ?? "unknown"));
+                        parameterName ?? Unknown));
             }
         }
 
@@ -67,7 +69,7 @@ public static partial class Guard
             {
                 throw new GuardException(
                     GuardMessages.ParameterCannotBeNullOrWhiteSpace(
-                        parameterName ?? "unknown"));
+                        parameterName ?? Unknown));
             }
         }
 
@@ -88,7 +90,7 @@ public static partial class Guard
             {
                 throw new GuardException(
                     GuardMessages.ParameterCannotBeNullOrEmpty(
-                        parameterName ?? "unknown"));
+                        parameterName ?? Unknown));
             }
         }
 
@@ -106,7 +108,7 @@ public static partial class Guard
             {
                 throw new GuardException(
                     GuardMessages.ParameterCannotBeNegative(
-                        parameterName ?? "unknown",
+                        parameterName ?? Unknown,
                         argument));
             }
         }
@@ -125,7 +127,7 @@ public static partial class Guard
             {
                 throw new GuardException(
                     GuardMessages.ParameterCannotBeNegative(
-                        parameterName ?? "unknown",
+                        parameterName ?? Unknown,
                         argument));
             }
         }
@@ -144,7 +146,7 @@ public static partial class Guard
             {
                 throw new GuardException(
                     GuardMessages.ParameterCannotBeNegative(
-                        parameterName ?? "unknown",
+                        parameterName ?? Unknown,
                         argument));
             }
         }
@@ -165,7 +167,7 @@ public static partial class Guard
             {
                 throw new GuardException(
                     GuardMessages.ParameterMustBeGreaterThanZero(
-                        parameterName ?? "unknown",
+                        parameterName ?? Unknown,
                         argument));
             }
         }
@@ -186,7 +188,7 @@ public static partial class Guard
             {
                 throw new GuardException(
                     GuardMessages.ParameterMustBeGreaterThanZero(
-                        parameterName ?? "unknown",
+                        parameterName ?? Unknown,
                         argument));
             }
         }
@@ -207,7 +209,7 @@ public static partial class Guard
             {
                 throw new GuardException(
                     GuardMessages.ParameterMustBeGreaterThanZero(
-                        parameterName ?? "unknown",
+                        parameterName ?? Unknown,
                         argument));
             }
         }
@@ -231,7 +233,7 @@ public static partial class Guard
             {
                 throw new GuardException(
                     GuardMessages.ParameterMustBeBetween(
-                        parameterName ?? "unknown",
+                        parameterName ?? Unknown,
                         min,
                         max,
                         argument));
@@ -257,7 +259,7 @@ public static partial class Guard
             {
                 throw new GuardException(
                     GuardMessages.ParameterMustBeBetween(
-                        parameterName ?? "unknown",
+                        parameterName ?? Unknown,
                         min,
                         max,
                         argument));
@@ -283,7 +285,7 @@ public static partial class Guard
             {
                 throw new GuardException(
                     GuardMessages.ParameterMustBeBetween(
-                        parameterName ?? "unknown",
+                        parameterName ?? Unknown,
                         min,
                         max,
                         argument));
@@ -311,7 +313,7 @@ public static partial class Guard
             {
                 throw new GuardException(
                     GuardMessages.ParameterCannotBeValue(
-                        parameterName ?? "unknown",
+                        parameterName ?? Unknown,
                         invalidValue));
             }
         }
@@ -330,7 +332,7 @@ public static partial class Guard
             {
                 throw new GuardException(
                     GuardMessages.ParameterCannotBeEmptyGuid(
-                        parameterName ?? "unknown"));
+                        parameterName ?? Unknown));
             }
         }
 
@@ -378,7 +380,7 @@ public static partial class Guard
             {
                 throw new GuardException(
                     GuardMessages.ParameterExceedsMaxLength(
-                        parameterName ?? "unknown",
+                        parameterName ?? Unknown,
                         maxLength,
                         argument.Length));
             }
@@ -400,7 +402,7 @@ public static partial class Guard
             {
                 throw new GuardException(
                     GuardMessages.ParameterBelowMinLength(
-                        parameterName ?? "unknown",
+                        parameterName ?? Unknown,
                         minLength,
                         argument.Length));
             }

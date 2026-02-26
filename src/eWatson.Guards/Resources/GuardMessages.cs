@@ -49,4 +49,7 @@ internal static class GuardMessages
     public static string ParameterBelowMinLength(string parameterName, int minLength, int actualLength)
         => string.Format(CultureInfo.InvariantCulture,
             Rm.GetString("ParameterBelowMinLength", CultureInfo.InvariantCulture)!, parameterName, minLength, actualLength);
+
+    public static string UnknownParameter
+        => Rm.GetString("UnknownParameter", CultureInfo.InvariantCulture)!;
 }

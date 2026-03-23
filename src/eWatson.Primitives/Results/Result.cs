@@ -1,13 +1,13 @@
 using eWatson.Abstractions.Results;
-using eWatson.Results.Resources;
+using eWatson.Primitives.Results.Resources;
 
-namespace eWatson.Results;
+namespace eWatson.Primitives.Results;
 
 /// <summary>
 /// Represents the outcome of an operation without a return value.
 /// Provides factory methods for creating success and failure results.
 /// </summary>
-public class Result : IResult
+public sealed class Result : IResult
 {
     /// <inheritdoc />
     public bool IsSuccess { get; }
@@ -19,18 +19,19 @@ public class Result : IResult
     public string? ErrorMessage { get; }
 
     /// <summary>
-    /// Gets the detailed error information if the operation failed.
+    /// Gets the collection of structured errors associated with this result.
+    /// Empty for success results.
     /// </summary>
-    public ResultError? ErrorDetails { get; }
+    public IReadOnlyList<ResultError> Errors { get; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Result"/> class.
+    /// Gets the first error if any exist, otherwise <c>null</c>.
+    /// Convenience accessor for single-error scenarios.
     /// </summary>
-    /// <param name="isSuccess">Whether the operation succeeded.</param>
-    /// <param name="errorMessage">The error message if the operation failed.</param>
-    /// <param name="errorDetails">Detailed error information.</param>
-    protected Result(bool isSuccess, string? errorMessage,
-        ResultError? errorDetails = null)
+    public ResultError? ErrorDetails => Errors.Count > 0 ? Errors[0] : null;
+
+    private Result(bool isSuccess, string? errorMessage,
+        IReadOnlyList<ResultError>? errors = null)
     {
         if (isSuccess && errorMessage is not null)
         {
@@ -46,7 +47,7 @@ public class Result : IResult
 
         IsSuccess = isSuccess;
         ErrorMessage = errorMessage;
-        ErrorDetails = errorDetails;
+        Errors = errors ?? [];
     }
 
     /// <summary>
@@ -65,7 +66,16 @@ public class Result : IResult
     /// </summary>
     /// <param name="error">The detailed error information.</param>
     public static Result Failure(ResultError error) =>
-        new(false, error.Message, error);
+        new(false, error.Message, [error]);
+
+    /// <summary>
+    /// Creates a failure result with multiple errors.
+    /// </summary>
+    /// <param name="errors">The collection of errors.</param>
+    public static Result Failure(IReadOnlyList<ResultError> errors) =>
+        new(false,
+            string.Join("; ", errors.Select(e => e.Message)),
+            errors);
 
     /// <summary>
     /// Creates a success result with a value.
@@ -79,7 +89,8 @@ public class Result : IResult
     /// </summary>
     /// <typeparam name="T">The type of the value.</typeparam>
     /// <param name="errorMessage">The error message.</param>
-    public static Result<T> Failure<T>(string errorMessage) => new(default!, false, errorMessage);
+    public static Result<T> Failure<T>(string errorMessage) =>
+        new(default!, false, errorMessage);
 
     /// <summary>
     /// Creates a failure result with a value type and detailed error.
@@ -87,5 +98,15 @@ public class Result : IResult
     /// <typeparam name="T">The type of the value.</typeparam>
     /// <param name="error">The detailed error information.</param>
     public static Result<T> Failure<T>(ResultError error) =>
-        new(default!, false, error.Message, error);
+        new(default!, false, error.Message, [error]);
+
+    /// <summary>
+    /// Creates a failure result with a value type and multiple errors.
+    /// </summary>
+    /// <typeparam name="T">The type of the value.</typeparam>
+    /// <param name="errors">The collection of errors.</param>
+    public static Result<T> Failure<T>(IReadOnlyList<ResultError> errors) =>
+        new(default!, false,
+            string.Join("; ", errors.Select(e => e.Message)),
+            errors);
 }

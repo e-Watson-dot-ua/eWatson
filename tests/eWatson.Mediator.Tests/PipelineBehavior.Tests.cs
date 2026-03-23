@@ -1,8 +1,9 @@
 ﻿using eWatson.Mediator.Abstractions;
 using eWatson.Mediator.Extensions;
 using eWatson.Mediator.Tests.Fakes;
-using eWatson.Results;
+using eWatson.Primitives.Results;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace eWatson.Mediator.Tests;
 
@@ -39,7 +40,7 @@ public sealed class PipelineBehaviorTests
         var result = await mediator.SendAsync(new FakeCommand(""));
 
         result.IsFailure.Should().BeTrue();
-        result.ErrorMessage.Should().Contain("FakeCommand");
+        result.ErrorMessage.Should().Contain("Value must not be empty");
     }
 
     // -----------------------------------------------------------------------
@@ -49,6 +50,7 @@ public sealed class PipelineBehaviorTests
     public async Task ExceptionHandlingBehavior_HandlerThrows_Returns_FailureResult()
     {
         var services = new ServiceCollection();
+        services.AddLogging();
         services.AddEWatsonMediator(
             o => { o.EnableExceptionHandlingBehavior = true; o.EnableLoggingBehavior = false; },
             typeof(PipelineBehaviorTests).Assembly);
@@ -65,6 +67,7 @@ public sealed class PipelineBehaviorTests
     public async Task ExceptionHandlingBehavior_OperationCanceled_IsNotSwallowed()
     {
         var services = new ServiceCollection();
+        services.AddLogging();
         services.AddEWatsonMediator(
             o => { o.EnableExceptionHandlingBehavior = true; o.EnableLoggingBehavior = false; },
             typeof(PipelineBehaviorTests).Assembly);

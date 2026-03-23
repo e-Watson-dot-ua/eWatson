@@ -7,6 +7,6 @@ namespace eWatson.Abstractions.Specifications;
 /// of type <typeparamref name="T"/>.
 /// </summary>
 /// <typeparam name="T">The type of the root entity.</typeparam>
-/// <param name="Expression">The lambda expression defining the navigation
+/// <param name="Expression">The expression defining the navigation
 /// property to include.</param>
-public sealed record Include<T>(LambdaExpression Expression);
+public sealed record Include<T>(Expression<Func<T, object>> Expression);

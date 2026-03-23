@@ -19,7 +19,7 @@ public class SpecificationTests
         {
             if (criteria != null)
             {
-                AddCriteria(criteria);
+                Where(criteria);
             }
         }
     }

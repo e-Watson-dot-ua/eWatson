@@ -1,4 +1,4 @@
-﻿using eWatson.Results;
+﻿using eWatson.Primitives.Results;
 
 namespace eWatson.Mediator.Abstractions;
 

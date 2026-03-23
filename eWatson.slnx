@@ -2,7 +2,7 @@
   <Folder Name="/src/">
     <Project Path="src/eWatson.Abstractions/eWatson.Abstractions.csproj" />
     <Project Path="src/eWatson.Persistence.Abstractions/eWatson.Persistence.Abstractions.csproj" />
-    <Project Path="src/eWatson.Results/eWatson.Results.csproj" />
+    <Project Path="src/eWatson.Primitives/eWatson.Primitives.csproj" />
     <Project Path="src/eWatson.Entities/eWatson.Entities.csproj" />
     <Project Path="src/eWatson.Guards/eWatson.Guards.csproj" />
     <Project Path="src/eWatson.ValueObjects/eWatson.ValueObjects.csproj" />
@@ -15,5 +15,8 @@
     <Project Path="tests/eWatson.Abstractions.Tests/eWatson.Abstractions.Tests.csproj" />
     <Project Path="tests/eWatson.Guards.Tests/eWatson.Guards.Tests.csproj" />
     <Project Path="tests/eWatson.Mediator.Tests/eWatson.Mediator.Tests.csproj" />
+    <Project Path="tests/eWatson.Primitives.Tests/eWatson.Primitives.Tests.csproj" />
+    <Project Path="tests/eWatson.Entities.Tests/eWatson.Entities.Tests.csproj" />
+    <Project Path="tests/eWatson.ValueObjects.Tests/eWatson.ValueObjects.Tests.csproj" />
   </Folder>
 </Solution>

@@ -1,6 +1,6 @@
-using eWatson.Results.Resources;
+using eWatson.Primitives.Results.Resources;
 
-namespace eWatson.Results;
+namespace eWatson.Primitives.Results;
 
 /// <summary>
 /// Represents a structured error with a code, message, and optional metadata.

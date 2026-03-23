@@ -5,9 +5,10 @@ namespace eWatson.Abstractions.Specifications;
 
 /// <summary>
 /// Base class for specifications providing fluent API for building queries.
+/// Implements <see cref="ICompositeSpecification{T}"/> for combining specifications.
 /// </summary>
 /// <typeparam name="T">The type being evaluated.</typeparam>
-public abstract class Specification<T> : ISpecification<T>
+public abstract class Specification<T> : ICompositeSpecification<T>
 {
     private readonly List<Include<T>> _includes = [];
     private readonly List<string> _includeStrings = [];
@@ -35,10 +36,12 @@ public abstract class Specification<T> : ISpecification<T>
     public bool Distinct { get; private set; }
 
     /// <summary>
-    /// Adds a filter criteria to the specification.
+    /// Sets the filter criteria for the specification.
+    /// Calling this multiple times replaces the previous criteria.
+    /// Use <see cref="CombineWith"/> or <see cref="CombineWithOr"/> to compose.
     /// </summary>
     /// <param name="criteria">The filter expression.</param>
-    protected void AddCriteria(Expression<Func<T, bool>> criteria)
+    protected void Where(Expression<Func<T, bool>> criteria)
     {
         Criteria = criteria;
     }
@@ -108,13 +111,69 @@ public abstract class Specification<T> : ISpecification<T>
         Distinct = true;
     }
 
+    /// <inheritdoc />
+    public ICompositeSpecification<T> CombineWith(ISpecification<T> other)
+    {
+        var combined = CombineCriteria(Criteria, other.Criteria, Expression.AndAlso);
+        return new InlineSpecification<T>(combined);
+    }
+
+    /// <inheritdoc />
+    public ICompositeSpecification<T> CombineWithOr(ISpecification<T> other)
+    {
+        var combined = CombineCriteria(Criteria, other.Criteria, Expression.OrElse);
+        return new InlineSpecification<T>(combined);
+    }
+
+    /// <inheritdoc />
+    public ICompositeSpecification<T> Invert()
+    {
+        if (Criteria is null) return new InlineSpecification<T>(null);
+        var param = Criteria.Parameters[0];
+        var negated = Expression.Lambda<Func<T, bool>>(
+            Expression.Not(Criteria.Body), param);
+        return new InlineSpecification<T>(negated);
+    }
+
     /// <summary>
     /// Implicitly converts the specification to its criteria expression.
     /// </summary>
-    /// <param name="specification">The specification to convert.</param>
-    /// <returns>The criteria expression, or null if no criteria is defined.</returns>
     public static implicit operator Expression<Func<T, bool>>?(Specification<T>? specification)
     {
         return specification?.Criteria;
+    }
+
+    private static Expression<Func<T, bool>>? CombineCriteria(
+        Expression<Func<T, bool>>? left,
+        Expression<Func<T, bool>>? right,
+        Func<Expression, Expression, BinaryExpression> combiner)
+    {
+        if (left is null) return right;
+        if (right is null) return left;
+
+        var param = left.Parameters[0];
+        var rightBody = new ParameterReplacer(right.Parameters[0], param)
+            .Visit(right.Body);
+        var body = combiner(left.Body, rightBody);
+        return Expression.Lambda<Func<T, bool>>(body, param);
+    }
+
+    private sealed class ParameterReplacer(
+        ParameterExpression oldParam, ParameterExpression newParam)
+        : ExpressionVisitor
+    {
+        protected override Expression VisitParameter(ParameterExpression node)
+            => node == oldParam ? newParam : base.VisitParameter(node);
+    }
+}
+
+/// <summary>
+/// Internal specification created by composition operations.
+/// </summary>
+internal sealed class InlineSpecification<T> : Specification<T>
+{
+    public InlineSpecification(Expression<Func<T, bool>>? criteria)
+    {
+        if (criteria is not null) Where(criteria);
     }
 }

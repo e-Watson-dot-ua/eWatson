@@ -1,5 +1,5 @@
 using eWatson.Mediator.Resources;
-using eWatson.Results;
+using eWatson.Primitives.Results;
 
 namespace eWatson.Mediator.Internal;
 
@@ -13,17 +13,17 @@ internal static class ResultHelper
     /// Creates a <see cref="Result"/> or <see cref="Result{T}"/> failure for
     /// <typeparamref name="TResponse"/>.
     /// </summary>
-    /// <typeparam name="TResponse">Must be <see cref="Result"/> or <see cref="Result{T}"/>.</typeparam>
-    /// <param name="error">The error to wrap.</param>
-    /// <returns>A typed failure result.</returns>
-    /// <exception cref="InvalidOperationException">
-    /// Thrown when <typeparamref name="TResponse"/> is neither <see cref="Result"/> nor
-    /// <see cref="Result{T}"/>.
-    /// </exception>
     internal static TResponse CreateFailure<TResponse>(ResultError error)
+        => CreateFailure<TResponse>((IReadOnlyList<ResultError>)[error]);
+
+    /// <summary>
+    /// Creates a <see cref="Result"/> or <see cref="Result{T}"/> failure for
+    /// <typeparamref name="TResponse"/> with multiple errors.
+    /// </summary>
+    internal static TResponse CreateFailure<TResponse>(IReadOnlyList<ResultError> errors)
     {
         if (typeof(TResponse) == typeof(Result))
-            return (TResponse)(object)Result.Failure(error);
+            return (TResponse)(object)Result.Failure(errors);
 
         if (!typeof(TResponse).IsGenericType || typeof(TResponse).GetGenericTypeDefinition() != typeof(Result<>))
             throw new InvalidOperationException(
@@ -31,9 +31,9 @@ internal static class ResultHelper
 
         var valueType = typeof(TResponse).GetGenericArguments()[0];
         var failureMethod = typeof(Result)
-            .GetMethod(nameof(Result.Failure), 1, [typeof(ResultError)])!
+            .GetMethod(nameof(Result.Failure), 1, [typeof(IReadOnlyList<ResultError>)])!
             .MakeGenericMethod(valueType);
 
-        return (TResponse)failureMethod.Invoke(null, [error])!;
+        return (TResponse)failureMethod.Invoke(null, [errors])!;
     }
 }

@@ -2,7 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\eWatson.Abstractions\eWatson.Abstractions.csproj" />
-    <ProjectReference Include="..\eWatson.Results\eWatson.Results.csproj" />
+    <ProjectReference Include="..\eWatson.Primitives\eWatson.Primitives.csproj" />
   </ItemGroup>
 
 </Project>

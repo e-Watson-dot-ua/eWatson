@@ -3,15 +3,34 @@ namespace eWatson.Abstractions.Specifications.Pagination;
 /// <summary>
 /// Represents pagination parameters with a 1-based page number and page size.
 /// </summary>
-/// <param name="Page">The 1-based page number.</param>
-/// <param name="Size">The number of items per page.</param>
-public sealed record Paging(int Page, int Size)
+public sealed record Paging
 {
     /// <summary>
-    /// Gets a value indicating whether the paging parameters are valid.
-    /// Both <see cref="Page"/> and <see cref="Size"/> must be greater than zero.
+    /// Gets the 1-based page number.
     /// </summary>
-    public bool IsValid => Page > 0 && Size > 0;
+    public int Page { get; }
+
+    /// <summary>
+    /// Gets the number of items per page.
+    /// </summary>
+    public int Size { get; }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Paging"/> record.
+    /// </summary>
+    /// <param name="page">The 1-based page number. Must be greater than zero.</param>
+    /// <param name="size">The number of items per page. Must be greater than zero.</param>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Thrown when <paramref name="page"/> or <paramref name="size"/> is less than or equal to zero.
+    /// </exception>
+    public Paging(int page, int size)
+    {
+        ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(page, 0);
+        ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(size, 0);
+
+        Page = page;
+        Size = size;
+    }
 
     /// <summary>
     /// Gets the number of items to skip for the current page.

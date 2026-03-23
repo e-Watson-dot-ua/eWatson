@@ -1,8 +1,9 @@
-﻿using eWatson.Abstractions.Results;
+using eWatson.Abstractions.Results;
 using eWatson.Mediator.Abstractions;
 using eWatson.Mediator.Internal;
 using eWatson.Mediator.Resources;
-using eWatson.Results;
+using eWatson.Primitives.Results;
+using Microsoft.Extensions.Logging;
 
 namespace eWatson.Mediator.Pipeline;
 
@@ -17,7 +18,9 @@ namespace eWatson.Mediator.Pipeline;
 /// </remarks>
 /// <typeparam name="TRequest">The request type.</typeparam>
 /// <typeparam name="TResponse">The response type.</typeparam>
-public sealed class ExceptionHandlingBehavior<TRequest, TResponse>
+/// <param name="logger">Logger for recording unhandled exceptions.</param>
+public sealed partial class ExceptionHandlingBehavior<TRequest, TResponse>(
+    ILogger<ExceptionHandlingBehavior<TRequest, TResponse>> logger)
     : IPipelineBehavior<TRequest, TResponse> where TRequest : notnull
 {
     /// <inheritdoc/>
@@ -35,10 +38,17 @@ public sealed class ExceptionHandlingBehavior<TRequest, TResponse>
             if (!typeof(IResult).IsAssignableFrom(typeof(TResponse)))
                 throw;
 
+            LogUnhandledException(logger, typeof(TRequest).Name, ex);
+
             var error = ResultError.Internal(
                 MediatorMessages.UnhandledException(typeof(TRequest).Name));
 
             return ResultHelper.CreateFailure<TResponse>(error);
         }
     }
+
+    [LoggerMessage(Level = LogLevel.Error,
+        Message = "Unhandled exception in handler for {RequestType}")]
+    private static partial void LogUnhandledException(
+        ILogger logger, string requestType, Exception ex);
 }

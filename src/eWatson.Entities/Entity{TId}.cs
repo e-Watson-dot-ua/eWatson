@@ -21,8 +21,6 @@ public abstract class Entity<TId> : IEntity<TId>
     /// <summary>
     /// Determines whether two entities are equal based on their identifiers.
     /// </summary>
-    /// <param name="obj">The object to compare with the current entity.</param>
-    /// <returns>True if the specified object is equal to the current entity; otherwise, false.</returns>
     public override bool Equals(object? obj)
     {
         if (obj is not Entity<TId> other)
@@ -43,10 +41,9 @@ public abstract class Entity<TId> : IEntity<TId>
     /// <summary>
     /// Returns the hash code for this entity based on its identifier.
     /// </summary>
-    /// <returns>A hash code for the current entity.</returns>
     public override int GetHashCode()
     {
-        return (GetType().ToString() + Id).GetHashCode();
+        return IsTransient() ? base.GetHashCode() : HashCode.Combine(GetType(), Id);
     }
 
     /// <summary>
@@ -75,9 +72,8 @@ public abstract class Entity<TId> : IEntity<TId>
     /// Checks if the entity is transient (not yet persisted).
     /// An entity is transient if its ID equals the default value.
     /// </summary>
-    /// <returns>True if the entity is transient; otherwise, false.</returns>
     private bool IsTransient()
     {
-        return Id.Equals(default);
+        return EqualityComparer<TId>.Default.Equals(Id, default!);
     }
 }

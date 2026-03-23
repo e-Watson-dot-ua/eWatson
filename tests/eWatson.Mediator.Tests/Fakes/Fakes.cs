@@ -1,5 +1,5 @@
 ﻿using eWatson.Mediator.Abstractions;
-using eWatson.Results;
+using eWatson.Primitives.Results;
 namespace eWatson.Mediator.Tests.Fakes;
 // ---------------------------------------------------------------------------
 // Fake command — void result
@@ -77,7 +77,7 @@ public sealed class FakeNotificationHandlerB : INotificationHandler<FakeNotifica
 // ---------------------------------------------------------------------------
 public sealed class FakeCommandValidator : IRequestValidator<FakeCommand>
 {
-    public IReadOnlyList<eWatson.Results.ResultError> Validate(FakeCommand request)
+    public IReadOnlyList<ResultError> Validate(FakeCommand request)
     {
         if (string.IsNullOrWhiteSpace(request.Value))
             return [ResultError.Validation("Value must not be empty.", "Value")];

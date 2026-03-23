@@ -1,6 +1,7 @@
 using eWatson.Abstractions.Results;
+using eWatson.Primitives.Maybes;
 
-namespace eWatson.Results;
+namespace eWatson.Primitives.Results;
 
 /// <summary>
 /// Extension methods for working with Result types in a functional style.
@@ -142,7 +143,17 @@ public static class ResultExtensions
                 ? result
                 : Result.Failure<T>(error);
         }
+
     }
+
+    /// <summary>
+    /// Converts a successful result to a <see cref="Maybe{T}"/>.
+    /// Returns <c>None</c> on failure.
+    /// </summary>
+    /// <typeparam name="T">The type of the result value.</typeparam>
+    /// <param name="result">The result to convert.</param>
+    public static Maybe<T> ToMaybe<T>(this Result<T> result) where T : notnull
+        => result.IsSuccess ? Maybe.Some(result.Value) : Maybe.None<T>();
 
     /// <param name="value">The nullable value.</param>
     /// <typeparam name="T">The type of the value.</typeparam>

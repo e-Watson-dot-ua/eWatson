@@ -1,5 +1,6 @@
 using eWatson.Abstractions.Entities;
 using eWatson.Abstractions.Specifications;
+using eWatson.Primitives.Maybes;
 
 namespace eWatson.Persistence.Abstractions.Repositories;
 
@@ -18,8 +19,8 @@ public interface IReadRepository<T, in TId>
     /// </summary>
     /// <param name="id">The aggregate identifier.</param>
     /// <param name="ct">Cancellation token.</param>
-    /// <returns>The aggregate if found; otherwise, null.</returns>
-    Task<T?> GetByIdAsync(TId id, CancellationToken ct = default);
+    /// <returns>A <see cref="Maybe{T}"/> containing the aggregate if found; otherwise, <c>None</c>.</returns>
+    Task<Maybe<T>> GetByIdAsync(TId id, CancellationToken ct = default);
 
     /// <summary>
     /// Retrieves all aggregates matching the specification.
@@ -50,12 +51,12 @@ public interface IReadRepository<T, in TId>
         CancellationToken ct = default);
 
     /// <summary>
-    /// Retrieves the first aggregate matching the specification, or <c>null</c>
+    /// Retrieves the first aggregate matching the specification, or <c>None</c>
     /// if no match is found.
     /// </summary>
     /// <param name="specification">The specification to match.</param>
     /// <param name="ct">Cancellation token.</param>
-    /// <returns>The first matching aggregate, or <c>null</c>.</returns>
-    Task<T?> FindFirstAsync(ISpecification<T> specification,
+    /// <returns>A <see cref="Maybe{T}"/> containing the first match, or <c>None</c>.</returns>
+    Task<Maybe<T>> FindFirstAsync(ISpecification<T> specification,
         CancellationToken ct = default);
 }

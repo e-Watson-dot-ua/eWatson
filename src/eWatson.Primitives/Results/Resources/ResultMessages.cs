@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace eWatson.Results.Resources;
+namespace eWatson.Primitives.Results.Resources;
 
 /// <summary>
 /// Contains error messages for result operations.

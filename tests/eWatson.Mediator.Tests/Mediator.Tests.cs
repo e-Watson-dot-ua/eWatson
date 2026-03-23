@@ -1,7 +1,7 @@
 ﻿using eWatson.Mediator.Abstractions;
 using eWatson.Mediator.Extensions;
 using eWatson.Mediator.Tests.Fakes;
-using eWatson.Results;
+using eWatson.Primitives.Results;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace eWatson.Mediator.Tests;

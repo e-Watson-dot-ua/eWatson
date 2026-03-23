@@ -12,16 +12,13 @@ namespace eWatson.Abstractions.Specifications.Pagination;
 public sealed record PageInfo(int Page, int Size, int TotalItems, int TotalPages,
     bool HasNext, bool HasPrevious)
 {
-    private static PageInfo Empty(Paging paging, int totalItems) =>
-        new(paging.Page, paging.Size, totalItems, 0, false, paging.Page > 1);
-
     /// <summary>
     /// Creates a <see cref="PageInfo"/> from paging parameters and total item count.
     /// </summary>
     public static PageInfo From(Paging paging, int totalItems)
     {
-        if (!paging.IsValid) return Empty(paging, totalItems);
-        if (totalItems <= 0) return Empty(paging, 0);
+        if (totalItems <= 0)
+            return new(paging.Page, paging.Size, 0, 0, false, paging.Page > 1);
 
         var totalPages = (int)Math.Ceiling((double)totalItems / paging.Size);
 

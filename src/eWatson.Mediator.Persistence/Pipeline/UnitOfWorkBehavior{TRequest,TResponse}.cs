@@ -1,6 +1,7 @@
 ﻿using eWatson.Abstractions.Results;
 using eWatson.Mediator.Abstractions;
 using eWatson.Persistence.Abstractions.UnitOfWork;
+using eWatson.Primitives.Results;
 
 namespace eWatson.Mediator.Persistence.Pipeline;
 
@@ -45,9 +46,10 @@ public sealed class UnitOfWorkBehavior<TRequest, TResponse>(IUnitOfWork unitOfWo
         RequestContinuation<TResponse> continuation,
         CancellationToken ct = default)
     {
-        // Only manage a transaction when the response is a Result type.
-        // Queries that return plain values pass through unchanged.
-        if (!typeof(IResult).IsAssignableFrom(typeof(TResponse)))
+        // Only manage a transaction for commands (types implementing ICommand).
+        // Queries and non-Result responses pass through unchanged.
+        if (!typeof(IResult).IsAssignableFrom(typeof(TResponse))
+            || typeof(ICommand).IsAssignableFrom(typeof(TRequest)) is false)
             return await continuation(ct).ConfigureAwait(false);
 
         await _unitOfWork.BeginTransactionAsync(ct).ConfigureAwait(false);

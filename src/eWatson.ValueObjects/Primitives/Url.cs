@@ -56,8 +56,8 @@ public sealed class Url : ValueObject
             Uri.TryCreate(value, uriKind, out var uri),
             ValueObjectMessages.UrlInvalidFormat(value));
 
-        Value = value;
         Uri = uri!;
+        Value = Uri.ToString();
     }
 
     /// <summary>

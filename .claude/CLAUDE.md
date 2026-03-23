@@ -37,8 +37,9 @@ eWatson.Guards                ← Guard.Against.* static guard clauses (throws G
 eWatson.Entities              ← Entity<TId>, AggregateRoot<TId>, DomainEvent base types
 eWatson.ValueObjects          ← ValueObject base + primitives: Email, PhoneNumber, Money, Percentage, Url, PostalCode, DateRange
 eWatson.Mediator.Abstractions ← IMediator, ICommand/IQuery/INotification marker interfaces, MediatorOptions, IPipelineBehavior
-eWatson.Mediator              ← Mediator implementation, DI registration (AddEWatsonMediator), pipeline wiring
-eWatson.Mediator.Persistence  ← UnitOfWorkBehavior<TRequest,TResponse> + AddEWatsonMediatorUnitOfWork()
+eWatson.Mediator              ← Mediator implementation, DI registration (AddMediator), pipeline wiring
+eWatson.Mediator.Persistence  ← UnitOfWorkBehavior<TRequest,TResponse> + AddMediatorUnitOfWork()
+eWatson.Events                ← Built-in DomainEventDispatcher + AddDomainEventDispatching() DI extension
 src/eWatson                   ← umbrella project that re-exports all of the above as one NuGet package
 ```
 
@@ -64,11 +65,11 @@ src/eWatson                   ← umbrella project that re-exports all of the ab
 ```
 ExceptionHandling → Logging → Validation → UnitOfWork → Handler
 ```
-`ExceptionHandling` and `Logging` are on by default; `Validation` is opt-in (`EnableValidationBehavior = true`). `UnitOfWork` is registered separately via `AddEWatsonMediatorUnitOfWork()`. Validation is done by implementing `IRequestValidator<TRequest>` — all validators for a given request type are resolved from DI and run before the handler.
+`ExceptionHandling` and `Logging` are on by default; `Validation` is opt-in (`EnableValidationBehavior = true`). `UnitOfWork` is registered separately via `AddMediatorUnitOfWork()`. Validation is done by implementing `IRequestValidator<TRequest>` — all validators for a given request type are resolved from DI and run before the handler.
 
 **Command vs Query distinction** — Commands implement `ICommand` (void) or `ICommand<TValue>` (returns `Result<TValue>`). Queries implement `IQuery<TResponse>` (returns `Result<TResponse>`). Both are subtypes of `IRequest<TResponse>`. The `UnitOfWorkBehavior` is a no-op unless `TResponse` implements `IResult`.
 
-**Domain events** — Aggregate roots inherit `AggregateRoot<TId>` and call `RaiseDomainEvent(new MyEvent(...))` inside domain methods. Infrastructure is responsible for dispatching via `IDomainEventDispatcher` and calling `ClearDomainEvents()` after dispatch.
+**Domain events** — Aggregate roots inherit `AggregateRoot<TId>` and call `RaiseDomainEvent(new MyEvent(...))` inside domain methods. The built-in `DomainEventDispatcher` (registered via `AddDomainEventDispatching(assemblies)`) resolves `IDomainEventListener<TEvent>` from DI and dispatches sequentially. Infrastructure calls `ClearDomainEvents()` after dispatch.
 
 **String resources** — All user-facing messages are kept in `Resources/*.cs` files per project (e.g. `GuardMessages`, `ResultMessages`, `MediatorMessages`, `ValueObjectMessages`). Do not inline message strings.
 

@@ -4,7 +4,7 @@
     <!-- This is the only packable project -->
     <IsPackable>true</IsPackable>
     <PackageId>eWatson</PackageId>
-    <Version>1.1.1</Version>
+    <Version>1.1.2</Version>
     <PackageDescription>eWatson foundational domain building blocks for .NET applications. Includes entities, value objects, guards, results pattern, and persistence abstractions.</PackageDescription>
   </PropertyGroup>
 
@@ -23,6 +23,7 @@
     <ProjectReference Include="..\eWatson.Mediator.Abstractions\eWatson.Mediator.Abstractions.csproj" PrivateAssets="All" />
     <ProjectReference Include="..\eWatson.Mediator\eWatson.Mediator.csproj" PrivateAssets="All" />
     <ProjectReference Include="..\eWatson.Mediator.Persistence\eWatson.Mediator.Persistence.csproj" PrivateAssets="All" />
+    <ProjectReference Include="..\eWatson.Events\eWatson.Events.csproj" PrivateAssets="All" />
   </ItemGroup>
 
   <!-- Declare runtime dependencies that must be pulled transitively by consumers -->
@@ -48,6 +49,7 @@
       <BuildOutputInPackage Include="$(OutputPath)eWatson.Mediator.Abstractions.dll" />
       <BuildOutputInPackage Include="$(OutputPath)eWatson.Mediator.dll" />
       <BuildOutputInPackage Include="$(OutputPath)eWatson.Mediator.Persistence.dll" />
+      <BuildOutputInPackage Include="$(OutputPath)eWatson.Events.dll" />
       <!-- Include XML documentation files -->
       <BuildOutputInPackage Include="$(OutputPath)eWatson.Abstractions.xml" />
       <BuildOutputInPackage Include="$(OutputPath)eWatson.Persistence.Abstractions.xml" />
@@ -58,6 +60,7 @@
       <BuildOutputInPackage Include="$(OutputPath)eWatson.Mediator.Abstractions.xml" />
       <BuildOutputInPackage Include="$(OutputPath)eWatson.Mediator.xml" />
       <BuildOutputInPackage Include="$(OutputPath)eWatson.Mediator.Persistence.xml" />
+      <BuildOutputInPackage Include="$(OutputPath)eWatson.Events.xml" />
     </ItemGroup>
   </Target>
 

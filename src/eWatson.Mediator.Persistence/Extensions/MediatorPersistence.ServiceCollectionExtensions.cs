@@ -18,19 +18,19 @@ public static class MediatorPersistenceServiceCollectionExtensions
     /// <returns>The same <see cref="IServiceCollection"/> instance for chaining.</returns>
     /// <remarks>
     /// <para>
-    /// Call this method <em>after</em> <c>AddEWatsonMediator</c> so that the UoW behaviour
+    /// Call this method <em>after</em> <c>AddMediator</c> so that the UoW behaviour
     /// is registered after the other behaviours and therefore executes closest to the handler:
     /// </para>
     /// <code>
-    /// services.AddEWatsonMediator(...)
-    ///         .AddEWatsonMediatorUnitOfWork();
+    /// services.AddMediator(...)
+    ///         .AddMediatorUnitOfWork();
     /// </code>
     /// <para>
     /// Ensure that an implementation of <c>IUnitOfWork</c> is registered in DI before
     /// calling this method, typically by your persistence infrastructure package.
     /// </para>
     /// </remarks>
-    public static IServiceCollection AddEWatsonMediatorUnitOfWork(
+    public static IServiceCollection AddMediatorUnitOfWork(
         this IServiceCollection services)
     {
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnitOfWorkBehavior<,>));

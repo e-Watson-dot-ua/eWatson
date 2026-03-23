@@ -10,6 +10,7 @@
     <Project Path="src/eWatson.Mediator.Abstractions/eWatson.Mediator.Abstractions.csproj" />
     <Project Path="src/eWatson.Mediator/eWatson.Mediator.csproj" />
     <Project Path="src/eWatson.Mediator.Persistence/eWatson.Mediator.Persistence.csproj" />
+    <Project Path="src/eWatson.Events/eWatson.Events.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/eWatson.Abstractions.Tests/eWatson.Abstractions.Tests.csproj" />
@@ -18,5 +19,6 @@
     <Project Path="tests/eWatson.Primitives.Tests/eWatson.Primitives.Tests.csproj" />
     <Project Path="tests/eWatson.Entities.Tests/eWatson.Entities.Tests.csproj" />
     <Project Path="tests/eWatson.ValueObjects.Tests/eWatson.ValueObjects.Tests.csproj" />
+    <Project Path="tests/eWatson.Events.Tests/eWatson.Events.Tests.csproj" />
   </Folder>
 </Solution>

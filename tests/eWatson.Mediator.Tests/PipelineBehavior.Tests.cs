@@ -16,7 +16,7 @@ public sealed class PipelineBehaviorTests
     public async Task ValidationBehavior_ValidRequest_CallsHandler()
     {
         var services = new ServiceCollection();
-        services.AddEWatsonMediator(
+        services.AddMediator(
             o => { o.EnableValidationBehavior = true; o.EnableLoggingBehavior = false; o.EnableExceptionHandlingBehavior = false; },
             typeof(PipelineBehaviorTests).Assembly);
 
@@ -31,7 +31,7 @@ public sealed class PipelineBehaviorTests
     public async Task ValidationBehavior_InvalidRequest_ShortCircuits_WithFailure()
     {
         var services = new ServiceCollection();
-        services.AddEWatsonMediator(
+        services.AddMediator(
             o => { o.EnableValidationBehavior = true; o.EnableLoggingBehavior = false; o.EnableExceptionHandlingBehavior = false; },
             typeof(PipelineBehaviorTests).Assembly);
 
@@ -51,7 +51,7 @@ public sealed class PipelineBehaviorTests
     {
         var services = new ServiceCollection();
         services.AddLogging();
-        services.AddEWatsonMediator(
+        services.AddMediator(
             o => { o.EnableExceptionHandlingBehavior = true; o.EnableLoggingBehavior = false; },
             typeof(PipelineBehaviorTests).Assembly);
 
@@ -68,7 +68,7 @@ public sealed class PipelineBehaviorTests
     {
         var services = new ServiceCollection();
         services.AddLogging();
-        services.AddEWatsonMediator(
+        services.AddMediator(
             o => { o.EnableExceptionHandlingBehavior = true; o.EnableLoggingBehavior = false; },
             typeof(PipelineBehaviorTests).Assembly);
         services.AddTransient<IRequestHandler<FakeCancelCommand, Result>, FakeCancelCommandHandler>();
@@ -87,7 +87,7 @@ public sealed class PipelineBehaviorTests
     public async Task LoggingBehavior_DoesNotAlterSuccessResult()
     {
         var services = new ServiceCollection();
-        services.AddEWatsonMediator(
+        services.AddMediator(
             o => { o.EnableLoggingBehavior = true; o.EnableExceptionHandlingBehavior = false; },
             typeof(PipelineBehaviorTests).Assembly);
 
@@ -103,7 +103,7 @@ public sealed class PipelineBehaviorTests
     public async Task LoggingBehavior_DoesNotAlterFailureResult()
     {
         var services = new ServiceCollection();
-        services.AddEWatsonMediator(
+        services.AddMediator(
             o => { o.EnableLoggingBehavior = true; o.EnableExceptionHandlingBehavior = false; },
             typeof(PipelineBehaviorTests).Assembly);
 
@@ -124,7 +124,7 @@ public sealed class PipelineBehaviorTests
         var log = new List<string>();
 
         var services = new ServiceCollection();
-        services.AddEWatsonMediator(
+        services.AddMediator(
             o => { o.EnableLoggingBehavior = false; o.EnableExceptionHandlingBehavior = false; },
             typeof(PipelineBehaviorTests).Assembly);
         services.AddTransient<IPipelineBehavior<FakeCommand, Result>>(

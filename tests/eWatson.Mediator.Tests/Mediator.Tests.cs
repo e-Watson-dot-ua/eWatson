@@ -17,7 +17,7 @@ public sealed class MediatorTests
     {
         var services = new ServiceCollection();
 
-        services.AddEWatsonMediator(
+        services.AddMediator(
             configure,
             typeof(MediatorTests).Assembly);
 

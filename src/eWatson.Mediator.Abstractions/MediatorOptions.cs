@@ -2,7 +2,7 @@
 
 /// <summary>
 /// Configuration options for the mediator, applied during DI registration
-/// via <c>AddEWatsonMediator</c>.
+/// via <c>AddMediator</c>.
 /// </summary>
 public sealed class MediatorOptions
 {

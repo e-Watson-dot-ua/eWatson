@@ -31,7 +31,7 @@ public static class MediatorServiceCollectionExtensions
     ///   <item><see cref="ValidationBehavior{TRequest,TResponse}"/> (if enabled)</item>
     /// </list>
     /// </remarks>
-    public static IServiceCollection AddEWatsonMediator(
+    public static IServiceCollection AddMediator(
         this IServiceCollection services,
         Action<MediatorOptions>? configure = null,
         params Assembly[] assemblies)

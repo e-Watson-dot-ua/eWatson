@@ -8,8 +8,8 @@ The eWatson package includes all the following components in a single package:
 
 - **Abstractions** - Core interfaces and contracts (entities, value objects, results, events, specifications, pagination)
 - **Persistence.Abstractions** - Repository patterns (read/write/combined) and unit of work
+- **Primitives** - Result pattern, Maybe pattern, PagedResult, and functional extensions
 - **Guards** - Validation and guard clauses for defensive programming
-- **Results** - Result pattern for functional error handling with rich error types
 - **Entities** - Entity and aggregate root base classes with domain event support
 - **ValueObjects** - Value object base classes and primitives (Email, PhoneNumber, Money, Percentage, URL, PostalCode, DateRange)
 - **Mediator** - In-process mediator for CQRS — commands, queries, and notifications with a composable pipeline
@@ -50,21 +50,96 @@ dotnet add package eWatson --source /path/to/eWatson/nupkgs
 Three repository interfaces for flexible data access:
 
 - **`IWriteRepository<T>`** - Command operations (Add, Update, Remove)
-- **`IReadRepository<T, TId>`** - Query operations (GetById, Find, Count)
+- **`IReadRepository<T, TId>`** - Query operations (GetById, Find, Count) — returns `Maybe<T>` for explicit optionality
 - **`IRepository<T, TId>`** - Combined interface extending both (full CRUD)
 
 ### Result Pattern
 
-Functional error handling without exceptions:
+Functional error handling without exceptions. Commands and queries always return `Result` or `Result<T>`.
 
 ```csharp
-public Result<Customer> GetCustomer(Guid id)
+public async Task<Result<Order>> GetOrderAsync(Guid id, CancellationToken ct)
 {
-    var customer = _repository.GetById(id);
-    return customer is not null
-        ? Result.Success(customer)
-        : Error.NotFound("Customer not found", "Customer");
+    Maybe<Order> order = await _repository.GetByIdAsync(id, ct);
+    return order.HasValue
+        ? order.Value
+        : ResultError.NotFound($"Order {id} not found", "Order");
 }
+```
+
+`ResultError` has static factories for all common error categories:
+
+```csharp
+ResultError.General("Something went wrong");
+ResultError.Validation("Total must be greater than zero", field: "Total");
+ResultError.NotFound("Order not found", entityName: "Order");
+ResultError.Unauthorized();
+ResultError.Forbidden();
+ResultError.Conflict("Order already exists");
+ResultError.Internal();
+```
+
+`Result<T>` supports implicit conversions — return a value or a `ResultError` directly:
+
+```csharp
+// Both are valid return statements from a Task<Result<Order>> method:
+return order;                                  // implicit success
+return ResultError.NotFound("Not found");      // implicit failure
+```
+
+Functional extensions (`Match`, `Map`, `Bind`, `Tap`, `TapError`, `Ensure`, `Combine`, async variants):
+
+```csharp
+Result<OrderDto> dto = result
+    .Ensure(o => o.IsActive, "Order is inactive")
+    .Map(o => new OrderDto(o));
+
+string response = dto.Match(
+    onSuccess: d => $"Order {d.Id}",
+    onFailure: msg => $"Error: {msg}");
+```
+
+### Maybe Pattern
+
+`Maybe<T>` is a readonly struct for explicit optionality — use instead of nullable references.
+
+Use the non-generic `Maybe` class for factory methods:
+
+```csharp
+Maybe<Customer> customer = Maybe.Some(existing);
+Maybe<Customer> empty    = Maybe.None<Customer>();
+
+// From nullable
+Maybe<Customer> maybe = nullableCustomer.ToMaybe();
+```
+
+Functional extensions (`Match`, `Map`, `Bind`, `Where`, `OrElse`, `Tap`, `ToResult`):
+
+```csharp
+string name = maybe.Match(
+    onSome: c => c.Name,
+    onNone: () => "Unknown");
+
+Maybe<string> email = maybe
+    .Where(c => c.IsActive)
+    .Map(c => c.Email);
+
+Result<Customer> result = maybe.ToResult(ResultError.NotFound("Customer not found", "Customer"));
+```
+
+### PagedResult
+
+`PagedResult<T>` carries a page of items together with `PageInfo` (page number, page size, total items, total pages).
+
+```csharp
+// Create
+var paged = PagedResult<OrderDto>.Create(items, paging, totalCount);
+
+// Empty page
+var empty = PagedResult<OrderDto>.Empty(paging);
+
+// Project items
+PagedResult<OrderSummary> summaries = paged.Map(dto => new OrderSummary(dto));
 ```
 
 ### Specification Pattern
@@ -72,14 +147,15 @@ public Result<Customer> GetCustomer(Guid id)
 Encapsulate business rules and queries:
 
 ```csharp
-public class ActiveCustomersSpec : ISpecification<Customer>
+public class ActiveCustomersSpec : Specification<Customer>
 {
-    public Expression<Func<Customer, bool>> Criteria =>
-        c => c.IsActive && !c.IsDeleted;
-    // ... other properties
+    public ActiveCustomersSpec()
+    {
+        Where(c => c.IsActive && !c.IsDeleted);
+    }
 }
 
-var customers = await _repository.FindAsync(new ActiveCustomersSpec());
+var customers = await _repository.FindAsync(new ActiveCustomersSpec(), ct);
 ```
 
 ### Mediator Pattern (CQRS)
@@ -139,9 +215,9 @@ public sealed class GetOrderHandler : IQueryHandler<GetOrderQuery, OrderDto>
 {
     public async Task<Result<OrderDto>> HandleAsync(GetOrderQuery query, CancellationToken ct)
     {
-        var order = await _repository.GetByIdAsync(query.OrderId, ct);
-        return order is not null
-            ? new OrderDto(order)
+        Maybe<Order> order = await _repository.GetByIdAsync(query.OrderId, ct);
+        return order.HasValue
+            ? new OrderDto(order.Value)
             : ResultError.NotFound($"Order {query.OrderId} not found", "Order");
     }
 }

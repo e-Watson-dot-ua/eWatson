@@ -269,6 +269,37 @@ ExceptionHandling → Logging → Validation → UnitOfWork → Handler
 
 Each layer is opt-in/opt-out via `MediatorOptions` at registration time.
 
+## Releasing a New Version
+
+**1. Bump the version** in `src/eWatson/eWatson.csproj`:
+
+```xml
+<Version>1.2.0</Version>
+```
+
+**2. Commit and tag:**
+
+```bash
+git add src/eWatson/eWatson.csproj
+git commit -m "chore: Bump version to 1.2.0"
+git tag v1.2.0
+git push && git push origin v1.2.0
+```
+
+**3. Build the package:**
+
+```powershell
+.\build-package.ps1 -Version 1.2.0
+```
+
+This outputs `./nupkgs/eWatson.1.2.0.nupkg` and `./nupkgs/eWatson.1.2.0.snupkg` (symbols).
+
+**4. Publish to a NuGet feed:**
+
+```bash
+dotnet nuget push ./nupkgs/eWatson.1.2.0.nupkg --source <feed-name>
+```
+
 ## Documentation
 
 For detailed architecture, conventions, and examples, see [.claude/CLAUDE.md](.claude/CLAUDE.md).

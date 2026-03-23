@@ -9,6 +9,19 @@ namespace eWatson.Persistence.Abstractions.Repositories;
 /// </summary>
 /// <typeparam name="T">The aggregate root type.</typeparam>
 /// <typeparam name="TId">The type of the aggregate identifier.</typeparam>
+/// <remarks>
+/// <para>
+/// <typeparamref name="T"/> is constrained to <see cref="IAggregateRoot{TId}"/> by design.
+/// Only aggregate roots own their transactional boundary and are valid repository targets in DDD.
+/// Entities that are not aggregate roots should be accessed through the repository of
+/// their owning aggregate root rather than through their own repository.
+/// </para>
+/// <para>
+/// If you need to promote an <c>Entity&lt;TId&gt;</c> to use this interface, inherit from
+/// <c>AggregateRoot&lt;TId&gt;</c> instead — this is an intentional DDD modelling decision,
+/// not a workaround.
+/// </para>
+/// </remarks>
 public interface IRepository<T, in TId> : IReadRepository<T, TId>, IWriteRepository<T>
     where T : IAggregateRoot<TId> where TId : IEquatable<TId>
 {

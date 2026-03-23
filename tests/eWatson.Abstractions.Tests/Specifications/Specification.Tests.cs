@@ -40,16 +40,23 @@ public class SpecificationTests
     }
 
     [Fact]
-    public void ImplicitOperator_WithoutCriteria_ReturnsNull()
+    public void ImplicitOperator_WithoutCriteria_ReturnsAlwaysMatchExpression()
     {
         // Arrange
+        var entities = new List<TestEntity>
+        {
+            new() { Id = 1, IsActive = true },
+            new() { Id = 2, IsActive = false }
+        };
         var spec = new TestSpecification();
 
         // Act
-        Expression<Func<TestEntity, bool>>? result = spec;
+        Expression<Func<TestEntity, bool>> result = spec!;
 
-        // Assert
-        result.Should().BeNull();
+        // Assert — default criteria matches everything
+        result.Should().NotBeNull();
+        var matched = entities.AsQueryable().Where(result).ToList();
+        matched.Should().HaveCount(2);
     }
 
     [Fact]

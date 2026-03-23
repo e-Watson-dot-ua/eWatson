@@ -27,8 +27,8 @@ public interface IReadRepository<T, in TId>
     /// </summary>
     /// <param name="specification">The specification to match.</param>
     /// <param name="ct">Cancellation token.</param>
-    /// <returns>A collection of aggregates matching the specification.</returns>
-    Task<IEnumerable<T>> FindAsync(ISpecification<T> specification,
+    /// <returns>A read-only list of aggregates matching the specification.</returns>
+    Task<IReadOnlyList<T>> FindAsync(ISpecification<T> specification,
         CancellationToken ct = default);
 
     /// <summary>
@@ -37,7 +37,7 @@ public interface IReadRepository<T, in TId>
     /// <param name="specification">The specification to match.</param>
     /// <param name="ct">Cancellation token.</param>
     /// <returns>The count of aggregates matching the specification.</returns>
-    Task<int> CountAsync(ISpecification<T> specification,
+    Task<long> CountAsync(ISpecification<T> specification,
         CancellationToken ct = default);
 
     /// <summary>

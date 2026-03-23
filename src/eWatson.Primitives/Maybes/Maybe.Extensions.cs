@@ -15,20 +15,20 @@ public static class MaybeExtensions
         /// Matches the maybe to one of two functions based on whether it has a value.
         /// </summary>
         /// <typeparam name="TResult">The return type.</typeparam>
-        /// <param name="onSome">Function to execute when a value is present.</param>
-        /// <param name="onNone">Function to execute when no value is present.</param>
-        public TResult Match<TResult>(Func<T, TResult> onSome, Func<TResult> onNone)
-            => maybe.HasValue ? onSome(maybe.Value) : onNone();
+        /// <param name="some">Function to execute when a value is present.</param>
+        /// <param name="none">Function to execute when no value is present.</param>
+        public TResult Match<TResult>(Func<T, TResult> some, Func<TResult> none)
+            => maybe.HasValue ? some(maybe.Value) : none();
 
         /// <summary>
         /// Matches the maybe to one of two actions based on whether it has a value.
         /// </summary>
-        /// <param name="onSome">Action to execute when a value is present.</param>
-        /// <param name="onNone">Action to execute when no value is present.</param>
-        public void Match(Action<T> onSome, Action onNone)
+        /// <param name="some">Action to execute when a value is present.</param>
+        /// <param name="none">Action to execute when no value is present.</param>
+        public void Match(Action<T> some, Action none)
         {
-            if (maybe.HasValue) onSome(maybe.Value);
-            else onNone();
+            if (maybe.HasValue) some(maybe.Value);
+            else none();
         }
 
         /// <summary>

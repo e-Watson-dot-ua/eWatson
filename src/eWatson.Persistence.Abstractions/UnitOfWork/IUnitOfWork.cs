@@ -3,7 +3,12 @@ namespace eWatson.Persistence.Abstractions.UnitOfWork;
 /// <summary>
 /// Represents a unit of work pattern for managing transactional boundaries.
 /// </summary>
-public interface IUnitOfWork : IDisposable, IAsyncDisposable
+/// <remarks>
+/// Intentionally does not extend <see cref="IDisposable"/> or <see cref="IAsyncDisposable"/>.
+/// Lifetime management of the underlying context (e.g. <c>DbContext</c>) is delegated to the
+/// DI container; callers should not dispose the unit of work directly.
+/// </remarks>
+public interface IUnitOfWork
 {
     /// <summary>
     /// Saves all changes made in this unit of work.

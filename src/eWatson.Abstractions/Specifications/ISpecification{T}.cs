@@ -12,9 +12,10 @@ public interface ISpecification<T>
 {
     /// <summary>
     /// Gets the filter expression to apply to the query.
-    /// Returns null if no filtering criteria should be applied.
+    /// Defaults to <c>_ =&gt; true</c> (match all) when no <c>Where</c> clause has been set.
+    /// Repository implementations can always apply this expression unconditionally.
     /// </summary>
-    Expression<Func<T, bool>>? Criteria { get; }
+    Expression<Func<T, bool>> Criteria { get; }
 
     /// <summary>
     /// Gets the collection of navigation properties to eager load (Entity Framework).

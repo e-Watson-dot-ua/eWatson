@@ -15,7 +15,7 @@ public abstract class Specification<T> : ICompositeSpecification<T>
     private readonly List<OrderBy<T>> _orderings = [];
 
     /// <inheritdoc />
-    public Expression<Func<T, bool>>? Criteria { get; private set; }
+    public Expression<Func<T, bool>> Criteria { get; private set; } = _ => true;
 
     /// <inheritdoc />
     public IReadOnlyList<Include<T>> Includes => _includes.AsReadOnly();
@@ -128,7 +128,6 @@ public abstract class Specification<T> : ICompositeSpecification<T>
     /// <inheritdoc />
     public ICompositeSpecification<T> Invert()
     {
-        if (Criteria is null) return new InlineSpecification<T>(null);
         var param = Criteria.Parameters[0];
         var negated = Expression.Lambda<Func<T, bool>>(
             Expression.Not(Criteria.Body), param);
@@ -137,20 +136,18 @@ public abstract class Specification<T> : ICompositeSpecification<T>
 
     /// <summary>
     /// Implicitly converts the specification to its criteria expression.
+    /// Returns <c>null</c> when the specification itself is <c>null</c>.
     /// </summary>
     public static implicit operator Expression<Func<T, bool>>?(Specification<T>? specification)
     {
         return specification?.Criteria;
     }
 
-    private static Expression<Func<T, bool>>? CombineCriteria(
-        Expression<Func<T, bool>>? left,
-        Expression<Func<T, bool>>? right,
+    private static Expression<Func<T, bool>> CombineCriteria(
+        Expression<Func<T, bool>> left,
+        Expression<Func<T, bool>> right,
         Func<Expression, Expression, BinaryExpression> combiner)
     {
-        if (left is null) return right;
-        if (right is null) return left;
-
         var param = left.Parameters[0];
         var rightBody = new ParameterReplacer(right.Parameters[0], param)
             .Visit(right.Body);
@@ -172,8 +169,5 @@ public abstract class Specification<T> : ICompositeSpecification<T>
 /// </summary>
 internal sealed class InlineSpecification<T> : Specification<T>
 {
-    public InlineSpecification(Expression<Func<T, bool>>? criteria)
-    {
-        if (criteria is not null) Where(criteria);
-    }
+    internal InlineSpecification(Expression<Func<T, bool>> criteria) => Where(criteria);
 }

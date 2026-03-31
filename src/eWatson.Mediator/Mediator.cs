@@ -63,6 +63,10 @@ public sealed class Mediator(IServiceProvider serviceProvider, MediatorOptions o
                     {
                         await handler.HandleAsync(notification, ct).ConfigureAwait(false);
                     }
+                    catch (OperationCanceledException)
+                    {
+                        throw;
+                    }
                     catch (Exception ex)
                     {
                         exceptions.Add(ex);

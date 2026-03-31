@@ -71,7 +71,7 @@ public sealed class Percentage : ValueObject
     /// </exception>
     public static Percentage operator +(Percentage left, Percentage right)
     {
-        return new Percentage(left.Value + right.Value);
+        return new Percentage(checked(left.Value + right.Value));
     }
 
     /// <summary>
@@ -85,7 +85,7 @@ public sealed class Percentage : ValueObject
     /// </exception>
     public static Percentage operator -(Percentage left, Percentage right)
     {
-        return new Percentage(left.Value - right.Value);
+        return new Percentage(checked(left.Value - right.Value));
     }
 
     /// <summary>

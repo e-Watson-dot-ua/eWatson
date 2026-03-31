@@ -31,6 +31,8 @@ public sealed record ResultError
     public ResultError(string code, string message,
         IReadOnlyDictionary<string, object>? metadata = null)
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(code);
+        ArgumentException.ThrowIfNullOrWhiteSpace(message);
         Code = code;
         Message = message;
         Metadata = metadata;

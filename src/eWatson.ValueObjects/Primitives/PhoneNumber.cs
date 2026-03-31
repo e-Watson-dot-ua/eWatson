@@ -20,6 +20,8 @@ public sealed partial class PhoneNumber : ValueObject
     [GeneratedRegex(@"^\+?\d+$")]
     private static partial Regex PhoneRegex();
 
+    private readonly bool _isInternational;
+
     /// <summary>
     /// Gets the normalized phone number (digits only, no formatting).
     /// </summary>
@@ -28,7 +30,18 @@ public sealed partial class PhoneNumber : ValueObject
     /// <summary>
     /// Gets the country code if provided, otherwise null.
     /// </summary>
+    /// <remarks>
+    /// Country code extraction requires a lookup table and is not currently supported.
+    /// Use <see cref="IsInternational"/> to check if the number was provided with a
+    /// country code prefix.
+    /// </remarks>
     public string? CountryCode { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether the phone number was provided with an
+    /// international prefix (+).
+    /// </summary>
+    public bool IsInternational => _isInternational;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PhoneNumber"/> class.
@@ -56,16 +69,9 @@ public sealed partial class PhoneNumber : ValueObject
                 MinDigits,
                 MaxDigits));
 
-        if (normalized.StartsWith('+'))
-        {
-            CountryCode = ExtractCountryCode(digits);
-            Value = digits;
-        }
-        else
-        {
-            CountryCode = null;
-            Value = digits;
-        }
+        _isInternational = normalized.StartsWith('+');
+        Value = digits;
+        CountryCode = null;
     }
 
     /// <summary>
@@ -81,7 +87,7 @@ public sealed partial class PhoneNumber : ValueObject
     {
         return format.ToUpperInvariant() switch
         {
-            "E164" => CountryCode != null ? $"+{Value}" : Value,
+            "E164" => _isInternational ? $"+{Value}" : Value,
             "INTERNATIONAL" => FormatInternational(),
             "NATIONAL" => FormatNational(),
             _ => Value
@@ -94,6 +100,7 @@ public sealed partial class PhoneNumber : ValueObject
     protected override IEnumerable<object?> GetEqualityComponents()
     {
         yield return Value;
+        yield return _isInternational;
     }
 
     /// <summary>
@@ -115,19 +122,10 @@ public sealed partial class PhoneNumber : ValueObject
         return normalized;
     }
 
-    private static string ExtractCountryCode(string digits)
-    {
-        return digits.Length > 10 ? digits[..^10] : string.Empty;
-    }
-
     private string FormatInternational()
     {
-        if (CountryCode != null && Value.Length > 10)
-        {
-            var cc = Value[..^10];
-            var number = Value[^10..];
-            return $"+{cc} {FormatNumberWithSpaces(number)}";
-        }
+        if (_isInternational)
+            return $"+{FormatNumberWithSpaces(Value)}";
 
         return FormatNumberWithSpaces(Value);
     }

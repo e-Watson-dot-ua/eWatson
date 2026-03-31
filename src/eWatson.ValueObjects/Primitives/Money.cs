@@ -70,7 +70,7 @@ public sealed class Money : ValueObject
                 left.Currency,
                 right.Currency));
 
-        return new Money(left.Amount + right.Amount, left.Currency);
+        return new Money(checked(left.Amount + right.Amount), left.Currency);
     }
 
     /// <summary>
@@ -90,7 +90,7 @@ public sealed class Money : ValueObject
                 left.Currency,
                 right.Currency));
 
-        return new Money(left.Amount - right.Amount, left.Currency);
+        return new Money(checked(left.Amount - right.Amount), left.Currency);
     }
 
     /// <summary>
@@ -101,7 +101,7 @@ public sealed class Money : ValueObject
     /// <returns>A new Money instance with the multiplied amount.</returns>
     public static Money operator *(Money money, decimal multiplier)
     {
-        return new Money(money.Amount * multiplier, money.Currency);
+        return new Money(checked(money.Amount * multiplier), money.Currency);
     }
 
     /// <summary>
@@ -131,7 +131,7 @@ public sealed class Money : ValueObject
             0m,
             nameof(divisor));
 
-        return new Money(money.Amount / divisor, money.Currency);
+        return new Money(checked(money.Amount / divisor), money.Currency);
     }
 
     /// <summary>

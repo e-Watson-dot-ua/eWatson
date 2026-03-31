@@ -73,7 +73,7 @@ public abstract class ValueObject : IValueObject, IEquatable<ValueObject>
                 0,
                 (hashCode, component) => HashCode.Combine(
                     hashCode,
-                    component?.GetHashCode() ?? 0));
+                    component));
     }
 
     /// <summary>

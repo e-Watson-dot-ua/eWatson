@@ -43,6 +43,7 @@ public abstract class Specification<T> : ICompositeSpecification<T>
     /// <param name="criteria">The filter expression.</param>
     protected void Where(Expression<Func<T, bool>> criteria)
     {
+        ArgumentNullException.ThrowIfNull(criteria);
         Criteria = criteria;
     }
 
@@ -52,6 +53,7 @@ public abstract class Specification<T> : ICompositeSpecification<T>
     /// <param name="includeExpression">The navigation property expression.</param>
     protected void AddInclude(Expression<Func<T, object>> includeExpression)
     {
+        ArgumentNullException.ThrowIfNull(includeExpression);
         _includes.Add(new Include<T>(includeExpression));
     }
 
@@ -62,6 +64,7 @@ public abstract class Specification<T> : ICompositeSpecification<T>
     /// <param name="includeString">The navigation property path as string.</param>
     protected void AddInclude(string includeString)
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(includeString);
         _includeStrings.Add(includeString);
     }
 
@@ -73,6 +76,7 @@ public abstract class Specification<T> : ICompositeSpecification<T>
     protected void AddOrderBy(Expression<Func<T, object>> orderByExpression,
         bool descending = false)
     {
+        ArgumentNullException.ThrowIfNull(orderByExpression);
         _orderings.Add(new OrderBy<T>(orderByExpression, descending));
     }
 

@@ -59,7 +59,8 @@ public sealed class Result : IResult
     /// Creates a failure result with an error message.
     /// </summary>
     /// <param name="errorMessage">The error message.</param>
-    public static Result Failure(string errorMessage) => new(false, errorMessage);
+    public static Result Failure(string errorMessage) =>
+        new(false, errorMessage, [ResultError.General(errorMessage)]);
 
     /// <summary>
     /// Creates a failure result with detailed error information.
@@ -90,7 +91,7 @@ public sealed class Result : IResult
     /// <typeparam name="T">The type of the value.</typeparam>
     /// <param name="errorMessage">The error message.</param>
     public static Result<T> Failure<T>(string errorMessage) =>
-        new(default!, false, errorMessage);
+        new(default!, false, errorMessage, [ResultError.General(errorMessage)]);
 
     /// <summary>
     /// Creates a failure result with a value type and detailed error.

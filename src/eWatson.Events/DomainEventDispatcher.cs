@@ -24,10 +24,12 @@ internal sealed partial class DomainEventDispatcher(
         var listenerType = typeof(IDomainEventListener<>).MakeGenericType(domainEvent.GetType());
         var listeners = _serviceProvider.GetServices(listenerType);
 
+        var handleMethod = listenerType.GetMethod("HandleAsync")!;
         foreach (var listener in listeners)
         {
             LogDispatching(_logger, domainEvent.EventType, listener!.GetType().Name);
-            await ((dynamic)listener).HandleAsync((dynamic)domainEvent, ct).ConfigureAwait(false);
+            var task = (Task)handleMethod.Invoke(listener, [domainEvent, ct])!;
+            await task.ConfigureAwait(false);
         }
     }
 

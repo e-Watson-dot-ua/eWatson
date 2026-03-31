@@ -14,12 +14,20 @@ public abstract class AggregateRoot<TId> : Entity<TId>, IAggregateRoot<TId>
     protected AggregateRoot() { }
     protected AggregateRoot(TId id) : base(id) { }
 
+    private readonly Lock _eventLock = new();
     private readonly List<IDomainEvent> _domainEvents = [];
 
     /// <summary>
     /// Gets the collection of domain events associated with this aggregate.
     /// </summary>
-    public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
+    public IReadOnlyCollection<IDomainEvent> DomainEvents
+    {
+        get
+        {
+            lock (_eventLock)
+                return _domainEvents.ToList().AsReadOnly();
+        }
+    }
 
     /// <summary>
     /// Adds a domain event to the aggregate's event collection.
@@ -27,7 +35,8 @@ public abstract class AggregateRoot<TId> : Entity<TId>, IAggregateRoot<TId>
     /// <param name="domainEvent">The domain event to add.</param>
     public void AddDomainEvent(IDomainEvent domainEvent)
     {
-        _domainEvents.Add(domainEvent);
+        lock (_eventLock)
+            _domainEvents.Add(domainEvent);
     }
 
     /// <summary>
@@ -36,7 +45,8 @@ public abstract class AggregateRoot<TId> : Entity<TId>, IAggregateRoot<TId>
     /// <param name="domainEvent">The domain event to remove.</param>
     public void RemoveDomainEvent(IDomainEvent domainEvent)
     {
-        _domainEvents.Remove(domainEvent);
+        lock (_eventLock)
+            _domainEvents.Remove(domainEvent);
     }
 
     /// <summary>
@@ -45,7 +55,8 @@ public abstract class AggregateRoot<TId> : Entity<TId>, IAggregateRoot<TId>
     /// </summary>
     public void ClearDomainEvents()
     {
-        _domainEvents.Clear();
+        lock (_eventLock)
+            _domainEvents.Clear();
     }
 
     /// <summary>

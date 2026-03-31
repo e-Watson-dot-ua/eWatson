@@ -191,10 +191,11 @@ public static partial class Guard
         /// Throws <see cref="GuardException"/> if the string exceeds the maximum length.
         /// </summary>
         public static void StringTooLong(
-            string argument,
+            [NotNull] string? argument,
             int maxLength,
             [CallerArgumentExpression(nameof(argument))] string? parameterName = null)
         {
+            Null(argument, parameterName);
             if (argument.Length > maxLength)
             {
                 throw new GuardException(
@@ -209,10 +210,11 @@ public static partial class Guard
         /// Throws <see cref="GuardException"/> if the string is shorter than the minimum length.
         /// </summary>
         public static void StringTooShort(
-            string argument,
+            [NotNull] string? argument,
             int minLength,
             [CallerArgumentExpression(nameof(argument))] string? parameterName = null)
         {
+            Null(argument, parameterName);
             if (argument.Length < minLength)
             {
                 throw new GuardException(

@@ -49,7 +49,7 @@ public sealed class UnitOfWorkBehavior<TRequest, TResponse>(IUnitOfWork unitOfWo
         // Only manage a transaction for commands (types implementing ICommand).
         // Queries and non-Result responses pass through unchanged.
         if (!typeof(IResult).IsAssignableFrom(typeof(TResponse))
-            || typeof(ICommand).IsAssignableFrom(typeof(TRequest)) is false)
+            || !IsCommand(typeof(TRequest)))
             return await continuation(ct).ConfigureAwait(false);
 
         await _unitOfWork.BeginTransactionAsync(ct).ConfigureAwait(false);
@@ -78,4 +78,9 @@ public sealed class UnitOfWorkBehavior<TRequest, TResponse>(IUnitOfWork unitOfWo
 
     private async Task RollbackAsync(CancellationToken ct)
         => await _unitOfWork.RollbackTransactionAsync(ct).ConfigureAwait(false);
+
+    private static bool IsCommand(Type requestType) =>
+        typeof(ICommand).IsAssignableFrom(requestType)
+        || requestType.GetInterfaces().Any(i =>
+            i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ICommand<>));
 }

@@ -226,7 +226,11 @@ public static class ResultExtensions
         var firstFailure = resultList.FirstOrDefault(r => r.IsFailure);
 
         if (firstFailure is not null)
-            return Result.Failure<IEnumerable<T>>(firstFailure.ErrorMessage!);
+        {
+            return firstFailure.ErrorDetails is not null
+                ? Result.Failure<IEnumerable<T>>(firstFailure.ErrorDetails)
+                : Result.Failure<IEnumerable<T>>(firstFailure.ErrorMessage!);
+        }
 
         return Result.Success(resultList.Select(r => r.Value));
     }

@@ -18,7 +18,10 @@ public sealed record PageInfo(int Page, int Size, int TotalItems, int TotalPages
     public static PageInfo From(Paging paging, int totalItems)
     {
         if (totalItems <= 0)
-            return new(paging.Page, paging.Size, 0, 0, false, paging.Page > 1);
+        {
+            return new PageInfo(paging.Page, paging.Size, 0, 0, 
+                false, paging.Page > 1);
+        }
 
         var totalPages = (int)Math.Ceiling((double)totalItems / paging.Size);
 

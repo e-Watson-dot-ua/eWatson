@@ -16,7 +16,7 @@ public sealed record Paging
     public int Size { get; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Paging"/> record.
+    /// Initialises a new instance of the <see cref="Paging"/> record.
     /// </summary>
     /// <param name="page">The 1-based page number. Must be greater than zero.</param>
     /// <param name="size">The number of items per page. Must be greater than zero.</param>

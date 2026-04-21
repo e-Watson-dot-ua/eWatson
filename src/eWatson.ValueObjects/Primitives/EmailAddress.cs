@@ -9,8 +9,9 @@ namespace eWatson.ValueObjects.Primitives;
 /// </summary>
 /// <remarks>
 /// Email addresses are validated using a regex pattern that checks for basic
-/// structure (local@domain). The validation is not exhaustive but catches
-/// common format errors.
+/// structure (local@domain). This is a pragmatic validator rather than a full
+/// RFC implementation. The original local part is preserved, while the domain
+/// part is normalized to lowercase for stable comparisons.
 /// </remarks>
 public sealed partial class EmailAddress : ValueObject
 {
@@ -37,6 +38,7 @@ public sealed partial class EmailAddress : ValueObject
     public EmailAddress(string value)
     {
         Guard.Against.NullOrWhiteSpace(value);
+        value = value.Trim();
         Guard.Against.True(
             value.Length > MaxLength,
             ValueObjectMessages.EmailAddressExceedsMaxLength(MaxLength));
@@ -44,7 +46,11 @@ public sealed partial class EmailAddress : ValueObject
             EmailRegex().IsMatch(value),
             ValueObjectMessages.EmailAddressInvalidFormat());
 
-        Value = value.ToLowerInvariant();
+        var separatorIndex = value.LastIndexOf('@');
+        var localPart = value[..separatorIndex];
+        var domainPart = value[(separatorIndex + 1)..];
+
+        Value = $"{localPart}@{domainPart.ToLowerInvariant()}";
     }
 
     /// <summary>

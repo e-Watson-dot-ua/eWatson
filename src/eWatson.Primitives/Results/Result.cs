@@ -73,10 +73,19 @@ public sealed class Result : IResult
     /// Creates a failure result with multiple errors.
     /// </summary>
     /// <param name="errors">The collection of errors.</param>
-    public static Result Failure(IReadOnlyList<ResultError> errors) =>
-        new(false,
+    public static Result Failure(IReadOnlyList<ResultError> errors)
+    {
+        ArgumentNullException.ThrowIfNull(errors);
+
+        if (errors.Count == 0)
+            throw new ArgumentException(
+                "Failure results must contain at least one error.",
+                nameof(errors));
+
+        return new(false,
             string.Join("; ", errors.Select(e => e.Message)),
             errors);
+    }
 
     /// <summary>
     /// Creates a success result with a value.
@@ -106,8 +115,17 @@ public sealed class Result : IResult
     /// </summary>
     /// <typeparam name="T">The type of the value.</typeparam>
     /// <param name="errors">The collection of errors.</param>
-    public static Result<T> Failure<T>(IReadOnlyList<ResultError> errors) =>
-        new(default!, false,
+    public static Result<T> Failure<T>(IReadOnlyList<ResultError> errors)
+    {
+        ArgumentNullException.ThrowIfNull(errors);
+
+        if (errors.Count == 0)
+            throw new ArgumentException(
+                "Failure results must contain at least one error.",
+                nameof(errors));
+
+        return new(default!, false,
             string.Join("; ", errors.Select(e => e.Message)),
             errors);
+    }
 }

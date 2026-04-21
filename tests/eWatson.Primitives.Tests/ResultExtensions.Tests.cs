@@ -53,6 +53,22 @@ public sealed class ResultExtensionsTests
     }
 
     [Fact]
+    public void Map_Failure_PreservesStructuredErrors()
+    {
+        var errors = new List<ResultError>
+        {
+            ResultError.Validation("bad input", "Name"),
+            ResultError.Conflict("duplicate value")
+        };
+        var result = Result.Failure<int>(errors);
+
+        var mapped = result.Map(v => v.ToString(System.Globalization.CultureInfo.InvariantCulture));
+
+        mapped.IsFailure.Should().BeTrue();
+        mapped.Errors.Should().BeEquivalentTo(errors);
+    }
+
+    [Fact]
     public void Bind_Success_ChainsResults()
     {
         var result = Result.Success(10);
@@ -71,6 +87,22 @@ public sealed class ResultExtensionsTests
         var bound = result.Bind(v => Result.Success(v + 5));
 
         bound.IsFailure.Should().BeTrue();
+    }
+
+    [Fact]
+    public void Bind_Failure_PreservesStructuredErrors()
+    {
+        var errors = new List<ResultError>
+        {
+            ResultError.Validation("bad input", "Name"),
+            ResultError.NotFound("missing entity", "Order")
+        };
+        var result = Result.Failure<int>(errors);
+
+        var bound = result.Bind(v => Result.Success(v + 5));
+
+        bound.IsFailure.Should().BeTrue();
+        bound.Errors.Should().BeEquivalentTo(errors);
     }
 
     [Fact]
@@ -189,5 +221,38 @@ public sealed class ResultExtensionsTests
 
         result.IsFailure.Should().BeTrue();
         result.ErrorMessage.Should().Be("not found");
+    }
+
+    [Fact]
+    public async Task MapAsync_Failure_PreservesStructuredErrors()
+    {
+        var errors = new List<ResultError>
+        {
+            ResultError.Validation("bad input", "Code"),
+            ResultError.Conflict("duplicate")
+        };
+        Task<Result<int>> resultTask = Task.FromResult(Result.Failure<int>(errors));
+
+        var mapped = await resultTask.MapAsync(
+            v => v.ToString(System.Globalization.CultureInfo.InvariantCulture));
+
+        mapped.IsFailure.Should().BeTrue();
+        mapped.Errors.Should().BeEquivalentTo(errors);
+    }
+
+    [Fact]
+    public async Task BindAsync_Failure_PreservesStructuredErrors()
+    {
+        var errors = new List<ResultError>
+        {
+            ResultError.Validation("bad input", "Code"),
+            ResultError.NotFound("missing entity", "Order")
+        };
+        Task<Result<int>> resultTask = Task.FromResult(Result.Failure<int>(errors));
+
+        var bound = await resultTask.BindAsync(v => Task.FromResult(Result.Success(v + 1)));
+
+        bound.IsFailure.Should().BeTrue();
+        bound.Errors.Should().BeEquivalentTo(errors);
     }
 }

@@ -1,5 +1,7 @@
 using eWatson.Guards;
 using eWatson.ValueObjects.Resources;
+using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace eWatson.ValueObjects.Primitives;
 
@@ -8,11 +10,16 @@ namespace eWatson.ValueObjects.Primitives;
 /// </summary>
 /// <remarks>
 /// Money value objects include both an amount and a three-letter ISO 4217
-/// currency code (e.g., USD, EUR, GBP). Arithmetic operations between Money
+/// currency code (e.g., USD, EUR, GBP). Validation is intentionally pragmatic:
+/// it enforces a three-letter alphabetic code, but does not verify the code
+/// against the full ISO 4217 registry. Arithmetic operations between Money
 /// instances require matching currencies.
 /// </remarks>
-public sealed class Money : ValueObject
+public sealed partial class Money : ValueObject
 {
+    [GeneratedRegex("^[A-Z]{3}$")]
+    private static partial Regex CurrencyCodeRegex();
+
     /// <summary>
     /// Gets the monetary amount.
     /// </summary>
@@ -36,12 +43,16 @@ public sealed class Money : ValueObject
     public Money(decimal amount, string currency)
     {
         Guard.Against.NullOrWhiteSpace(currency);
+        var normalizedCurrency = currency.Trim().ToUpperInvariant();
         Guard.Against.True(
-            currency.Length != 3,
+            normalizedCurrency.Length != 3,
+            ValueObjectMessages.MoneyInvalidCurrencyCodeLength());
+        Guard.Against.False(
+            CurrencyCodeRegex().IsMatch(normalizedCurrency),
             ValueObjectMessages.MoneyInvalidCurrencyCodeLength());
 
         Amount = amount;
-        Currency = currency.ToUpperInvariant();
+        Currency = normalizedCurrency;
     }
 
     /// <summary>
@@ -146,5 +157,6 @@ public sealed class Money : ValueObject
     /// <summary>
     /// Returns a string representation of the money value.
     /// </summary>
-    public override string ToString() => $"{Amount:N2} {Currency}";
+    public override string ToString()
+        => $"{Amount.ToString("N2", CultureInfo.InvariantCulture)} {Currency}";
 }

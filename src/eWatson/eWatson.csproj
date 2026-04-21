@@ -32,36 +32,24 @@
     <PackageReference Include="Microsoft.Extensions.Logging" />
   </ItemGroup>
 
-  <!-- Include all referenced project DLLs and XML docs in the package -->
+  <!-- Include project-reference outputs in the package without a hardcoded file list -->
   <PropertyGroup>
     <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
   </PropertyGroup>
 
-  <Target Name="CopyProjectReferencesToPackage">
+  <Target Name="CopyProjectReferencesToPackage" DependsOnTargets="ResolveReferences">
     <ItemGroup>
-      <!-- Include DLLs from all project references (they're copied to our bin folder) -->
-      <BuildOutputInPackage Include="$(OutputPath)eWatson.Abstractions.dll" />
-      <BuildOutputInPackage Include="$(OutputPath)eWatson.Persistence.Abstractions.dll" />
-      <BuildOutputInPackage Include="$(OutputPath)eWatson.Guards.dll" />
-      <BuildOutputInPackage Include="$(OutputPath)eWatson.Primitives.dll" />
-      <BuildOutputInPackage Include="$(OutputPath)eWatson.Entities.dll" />
-      <BuildOutputInPackage Include="$(OutputPath)eWatson.ValueObjects.dll" />
-      <BuildOutputInPackage Include="$(OutputPath)eWatson.Mediator.Abstractions.dll" />
-      <BuildOutputInPackage Include="$(OutputPath)eWatson.Mediator.dll" />
-      <BuildOutputInPackage Include="$(OutputPath)eWatson.Mediator.Persistence.dll" />
-      <BuildOutputInPackage Include="$(OutputPath)eWatson.Events.dll" />
-      <!-- Include XML documentation files -->
-      <BuildOutputInPackage Include="$(OutputPath)eWatson.Abstractions.xml" />
-      <BuildOutputInPackage Include="$(OutputPath)eWatson.Persistence.Abstractions.xml" />
-      <BuildOutputInPackage Include="$(OutputPath)eWatson.Guards.xml" />
-      <BuildOutputInPackage Include="$(OutputPath)eWatson.Primitives.xml" />
-      <BuildOutputInPackage Include="$(OutputPath)eWatson.Entities.xml" />
-      <BuildOutputInPackage Include="$(OutputPath)eWatson.ValueObjects.xml" />
-      <BuildOutputInPackage Include="$(OutputPath)eWatson.Mediator.Abstractions.xml" />
-      <BuildOutputInPackage Include="$(OutputPath)eWatson.Mediator.xml" />
-      <BuildOutputInPackage Include="$(OutputPath)eWatson.Mediator.Persistence.xml" />
-      <BuildOutputInPackage Include="$(OutputPath)eWatson.Events.xml" />
+      <ProjectReferenceOutputs Include="@(ReferenceCopyLocalPaths)"
+        Condition="'%(ReferenceCopyLocalPaths.ReferenceSourceTarget)' == 'ProjectReference'
+          and ('%(ReferenceCopyLocalPaths.Extension)' == '.dll'
+            or '%(ReferenceCopyLocalPaths.Extension)' == '.xml')" />
+
+      <BuildOutputInPackage Include="@(ProjectReferenceOutputs)"
+        TargetPath="%(ProjectReferenceOutputs.Filename)%(ProjectReferenceOutputs.Extension)" />
     </ItemGroup>
+
+    <Error Condition="'@(ProjectReferenceOutputs)' == ''"
+      Text="No project reference outputs were collected for packaging. Ensure the umbrella project references build outputs are available before packing." />
   </Target>
 
 </Project>

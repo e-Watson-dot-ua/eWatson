@@ -40,6 +40,14 @@ public sealed class MoneyTests
     }
 
     [Fact]
+    public void Constructor_NonAlphabeticCurrency_Throws()
+    {
+        var act = () => new Money(10m, "U1D");
+
+        act.Should().Throw<GuardException>();
+    }
+
+    [Fact]
     public void Zero_CreatesZeroAmount()
     {
         var money = Money.Zero("EUR");
@@ -140,11 +148,10 @@ public sealed class MoneyTests
     }
 
     [Fact]
-    public void ToString_ContainsCurrencyCode()
+    public void ToString_UsesInvariantFormatting()
     {
         var money = new Money(10.50m, "GBP");
 
-        money.ToString().Should().Contain("GBP");
-        money.ToString().Should().Contain("10");
+        money.ToString().Should().Be("10.50 GBP");
     }
 }

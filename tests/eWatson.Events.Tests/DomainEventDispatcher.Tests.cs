@@ -98,6 +98,46 @@ public sealed class DomainEventDispatcherTests
         await act.Should().NotThrowAsync();
     }
 
+    [Fact]
+    public async Task DispatchAsync_ListenerThrows_PropagatesException_AndStopsFurtherListeners()
+    {
+        ThrowingFaultedOrderCreatedListener.Calls = 0;
+        TrailingFaultedOrderCreatedListener.Calls = 0;
+
+        var services = new ServiceCollection();
+        services.AddLogging();
+        services.AddDomainEventDispatching();
+        services.AddTransient<IDomainEventListener<FaultedOrderCreatedEvent>, ThrowingFaultedOrderCreatedListener>();
+        services.AddTransient<IDomainEventListener<FaultedOrderCreatedEvent>, TrailingFaultedOrderCreatedListener>();
+        var dispatcher = services.BuildServiceProvider()
+            .GetRequiredService<IDomainEventDispatcher>();
+
+        var act = async () => await dispatcher.DispatchAsync(new FaultedOrderCreatedEvent("ORD-7"));
+
+        await act.Should().ThrowAsync<InvalidOperationException>()
+            .WithMessage("listener boom");
+        ThrowingFaultedOrderCreatedListener.Calls.Should().Be(1);
+        TrailingFaultedOrderCreatedListener.Calls.Should().Be(0);
+    }
+
+    [Fact]
+    public async Task DispatchAsync_CanceledListener_PropagatesOperationCanceledException()
+    {
+        var services = new ServiceCollection();
+        services.AddLogging();
+        services.AddDomainEventDispatching();
+        services.AddTransient<IDomainEventListener<CancelableOrderCancelledEvent>, CancelingOrderCancelledListener>();
+        var dispatcher = services.BuildServiceProvider()
+            .GetRequiredService<IDomainEventDispatcher>();
+
+        using var cts = new CancellationTokenSource();
+        cts.Cancel();
+
+        var act = async () => await dispatcher.DispatchAsync(new CancelableOrderCancelledEvent("ORD-8"), cts.Token);
+
+        await act.Should().ThrowAsync<OperationCanceledException>();
+    }
+
     // -----------------------------------------------------------------------
     // Null guards
     // -----------------------------------------------------------------------
@@ -156,6 +196,8 @@ public sealed class DomainEventDispatcherTests
         RecordingOrderCreatedListener.Received.Clear();
         RecordingOrderCancelledListener.Received.Clear();
         SecondOrderCreatedListener.Received.Clear();
+        ThrowingFaultedOrderCreatedListener.Calls = 0;
+        TrailingFaultedOrderCreatedListener.Calls = 0;
     }
 }
 
@@ -164,6 +206,8 @@ public sealed class DomainEventDispatcherTests
 // ---------------------------------------------------------------------------
 public sealed record OrderCreatedEvent(string OrderNumber) : DomainEvent;
 public sealed record OrderCancelledEvent(string OrderNumber) : DomainEvent;
+public sealed record FaultedOrderCreatedEvent(string OrderNumber) : DomainEvent;
+public sealed record CancelableOrderCancelledEvent(string OrderNumber) : DomainEvent;
 
 // ---------------------------------------------------------------------------
 // Test listeners
@@ -199,4 +243,32 @@ public sealed class RecordingOrderCancelledListener : IDomainEventListener<Order
         Received.Add(domainEvent);
         return Task.CompletedTask;
     }
+}
+
+public sealed class ThrowingFaultedOrderCreatedListener : IDomainEventListener<FaultedOrderCreatedEvent>
+{
+    public static int Calls { get; set; }
+
+    public Task HandleAsync(FaultedOrderCreatedEvent domainEvent, CancellationToken ct = default)
+    {
+        Calls++;
+        throw new InvalidOperationException("listener boom");
+    }
+}
+
+public sealed class TrailingFaultedOrderCreatedListener : IDomainEventListener<FaultedOrderCreatedEvent>
+{
+    public static int Calls { get; set; }
+
+    public Task HandleAsync(FaultedOrderCreatedEvent domainEvent, CancellationToken ct = default)
+    {
+        Calls++;
+        return Task.CompletedTask;
+    }
+}
+
+public sealed class CancelingOrderCancelledListener : IDomainEventListener<CancelableOrderCancelledEvent>
+{
+    public Task HandleAsync(CancelableOrderCancelledEvent domainEvent, CancellationToken ct = default)
+        => Task.FromCanceled(ct);
 }

@@ -48,7 +48,7 @@ public static class ResultExtensions
         {
             return result.IsSuccess
                 ? Result.Success(mapper(result.Value))
-                : Result.Failure<TOut>(result.ErrorMessage!);
+                : PropagateFailure<T, TOut>(result);
         }
 
         /// <summary>
@@ -61,7 +61,7 @@ public static class ResultExtensions
         {
             return result.IsSuccess
                 ? binder(result.Value)
-                : Result.Failure<TOut>(result.ErrorMessage!);
+                : PropagateFailure<T, TOut>(result);
         }
     }
 
@@ -196,7 +196,7 @@ public static class ResultExtensions
             var result = await resultTask;
             return result.IsSuccess
                 ? Result.Success(mapper(result.Value))
-                : Result.Failure<TOut>(result.ErrorMessage!);
+                : PropagateFailure<TIn, TOut>(result);
         }
 
         /// <summary>
@@ -209,7 +209,7 @@ public static class ResultExtensions
             var result = await resultTask;
             return result.IsSuccess
                 ? await binder(result.Value)
-                : Result.Failure<TOut>(result.ErrorMessage!);
+                : PropagateFailure<TIn, TOut>(result);
         }
     }
 
@@ -233,5 +233,13 @@ public static class ResultExtensions
         }
 
         return Result.Success(resultList.Select(r => r.Value));
+    }
+
+    private static Result<TOut> PropagateFailure<TIn, TOut>(IResult<TIn> result)
+    {
+        if (result is Result<TIn> concrete && concrete.Errors.Count > 0)
+            return Result.Failure<TOut>(concrete.Errors);
+
+        return Result.Failure<TOut>(result.ErrorMessage!);
     }
 }

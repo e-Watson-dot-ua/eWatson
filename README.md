@@ -15,6 +15,16 @@ The eWatson package includes all the following components in a single package:
 - **Mediator** - In-process mediator for CQRS — commands, queries, and notifications with a composable pipeline
 - **Mediator.Persistence** - Unit-of-work pipeline behaviour that wraps commands in a database transaction
 
+## Framework Targeting
+
+The package currently targets `net10.0` only.
+
+This is an intentional trade-off for now: it keeps the library aligned with the
+latest language/runtime features used across the codebase and avoids the extra
+maintenance cost of multi-targeting. If downstream consumers need broader
+compatibility later, `net8.0` + `net10.0` multi-targeting is the next option to
+evaluate.
+
 ## Building
 
 ```bash
@@ -165,7 +175,7 @@ In-process mediator for dispatching commands, queries, and notifications through
 #### Registration
 
 ```csharp
-services.AddEWatsonMediator(
+services.AddMediator(
     configure: o =>
     {
         o.EnableValidationBehavior = true;   // off by default
@@ -176,7 +186,7 @@ services.AddEWatsonMediator(
     typeof(Program).Assembly);
 
 // Optional: wrap commands in a DB transaction (requires IUnitOfWork in DI)
-services.AddEWatsonMediatorUnitOfWork();
+services.AddMediatorUnitOfWork();
 ```
 
 #### Commands
@@ -268,6 +278,16 @@ ExceptionHandling → Logging → Validation → UnitOfWork → Handler
 ```
 
 Each layer is opt-in/opt-out via `MediatorOptions` at registration time.
+
+### Value Object Validation Notes
+
+`EmailAddress` and `Money` use pragmatic validation rules rather than full
+standards implementations:
+
+- `EmailAddress` validates common `local@domain` structure and normalizes only
+  the domain part to lowercase for stable comparisons.
+- `Money` enforces a three-letter alphabetic currency code, but does not verify
+  the code against the complete ISO 4217 registry.
 
 ## Releasing a New Version
 

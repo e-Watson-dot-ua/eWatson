@@ -99,4 +99,36 @@ public sealed class ResultTests
         result.ErrorDetails.Should().BeNull();
         result.Errors.Should().BeEmpty();
     }
+
+    [Fact]
+    public void Failure_WithNullErrors_Throws()
+    {
+        var act = () => Result.Failure((IReadOnlyList<ResultError>)null!);
+
+        act.Should().Throw<ArgumentNullException>();
+    }
+
+    [Fact]
+    public void Failure_WithEmptyErrors_Throws()
+    {
+        var act = () => Result.Failure([]);
+
+        act.Should().Throw<ArgumentException>();
+    }
+
+    [Fact]
+    public void FailureT_WithNullErrors_Throws()
+    {
+        var act = () => Result.Failure<int>((IReadOnlyList<ResultError>)null!);
+
+        act.Should().Throw<ArgumentNullException>();
+    }
+
+    [Fact]
+    public void FailureT_WithEmptyErrors_Throws()
+    {
+        var act = () => Result.Failure<int>([]);
+
+        act.Should().Throw<ArgumentException>();
+    }
 }

@@ -46,6 +46,20 @@
 
       <BuildOutputInPackage Include="@(ProjectReferenceOutputs)"
         TargetPath="%(ProjectReferenceOutputs.Filename)%(ProjectReferenceOutputs.Extension)" />
+
+      <ProjectReferenceXmlOutputs Include="@(ReferenceCopyLocalPaths->'%(RootDir)%(Directory)%(Filename).xml')"
+        Condition="'%(ReferenceCopyLocalPaths.ReferenceSourceTarget)' == 'ProjectReference'
+          and Exists('%(RootDir)%(Directory)%(Filename).xml')" />
+
+      <BuildOutputInPackage Include="@(ProjectReferenceXmlOutputs)"
+        TargetPath="%(ProjectReferenceXmlOutputs.Filename)%(ProjectReferenceXmlOutputs.Extension)" />
+
+      <ProjectReferencePdbOutputs Include="@(ReferenceCopyLocalPaths->'%(RootDir)%(Directory)%(Filename).pdb')"
+        Condition="'%(ReferenceCopyLocalPaths.ReferenceSourceTarget)' == 'ProjectReference'
+          and Exists('%(RootDir)%(Directory)%(Filename).pdb')" />
+
+      <BuildOutputInPackage Include="@(ProjectReferencePdbOutputs)"
+        TargetPath="%(ProjectReferencePdbOutputs.Filename)%(ProjectReferencePdbOutputs.Extension)" />
     </ItemGroup>
 
     <Error Condition="'@(ProjectReferenceOutputs)' == ''"

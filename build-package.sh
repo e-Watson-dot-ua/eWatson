@@ -8,6 +8,7 @@ CONFIGURATION="Release"
 VERSION=""
 CLEAN=true
 SKIP_BUILD=false
+INCLUDE_SYMBOLS=true
 OUTPUT_DIR="./nupkgs"
 PROJECT_PATH="src/eWatson/eWatson.csproj"
 
@@ -43,7 +44,8 @@ OPTIONS:
     -v, --version VERSION       Override package version
     -c, --configuration CONFIG  Build configuration (Debug|Release, default: Release)
     --no-clean                  Skip cleaning previous packages
-    --skip-build                Skip build step, only pack
+    --skip-build                Skip explicit solution build and run pack directly
+    --no-symbols                Do not create a .snupkg symbol package
     -h, --help                  Show this help message
 
 EXAMPLES:
@@ -57,7 +59,7 @@ EXAMPLES:
         Build and pack with Debug configuration
 
     $0 --skip-build
-        Pack without rebuilding
+        Skip the explicit solution build and run pack directly
 EOF
     exit 0
 }
@@ -79,6 +81,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         --skip-build)
             SKIP_BUILD=true
+            shift
+            ;;
+        --no-symbols)
+            INCLUDE_SYMBOLS=false
             shift
             ;;
         -h|--help)
@@ -129,10 +135,17 @@ write_step "Creating NuGet package"
 
 PACK_ARGS=(
     pack
-    --no-build
     --configuration "$CONFIGURATION"
     --output "$OUTPUT_DIR"
 )
+
+if [ "$SKIP_BUILD" = true ]; then
+    PACK_ARGS+=(--no-restore)
+fi
+
+if [ "$INCLUDE_SYMBOLS" = true ]; then
+    PACK_ARGS+=(--include-symbols -p:SymbolPackageFormat=snupkg)
+fi
 
 if [ -n "$VERSION" ]; then
     PACK_ARGS+=("-p:Version=$VERSION")

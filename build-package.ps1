@@ -8,7 +8,7 @@
 
 .PARAMETER Version
     Override the package version. If not specified, uses version from
-    Directory.Build.props.
+    src/eWatson/eWatson.csproj.
 
 .PARAMETER Configuration
     Build configuration (Debug or Release). Default is Release.
@@ -20,11 +20,13 @@
     Clean build output before building. Default is true.
 
 .PARAMETER SkipBuild
-    Skip the build step and only pack existing binaries. Default is false.
+    Skip the explicit solution build step. The pack step still builds the
+    packable project so project-reference outputs can be collected correctly.
+    Default is false.
 
 .EXAMPLE
     .\build-package.ps1
-    Build and pack all projects with Release configuration.
+    Build and pack eWatson with Release configuration.
 
 .EXAMPLE
     .\build-package.ps1 -Version 1.0.1-preview
@@ -36,7 +38,7 @@
 
 .EXAMPLE
     .\build-package.ps1 -SkipBuild
-    Pack without rebuilding (uses existing binaries).
+    Skip the explicit solution build and run pack directly.
 #>
 
 [CmdletBinding()]
@@ -126,10 +128,18 @@ if (-not $SkipBuild) {
 
 # Pack arguments
 $packArgs = @(
-    '--no-build'
     '--configuration', $Configuration
     '--output', $OutputDir
 )
+
+if ($SkipBuild) {
+    $packArgs += '--no-restore'
+}
+
+if ($IncludeSymbols) {
+    $packArgs += '--include-symbols'
+    $packArgs += '-p:SymbolPackageFormat=snupkg'
+}
 
 if ($Version) {
     $packArgs += "-p:Version=$Version"
@@ -154,7 +164,7 @@ $packages = Get-ChildItem -Path $OutputDir -Filter *.nupkg |
     Where-Object { $_.Name -notlike '*.symbols.nupkg' }
 
 foreach ($package in $packages) {
-    $size = [math]::Round($package.Length / 1KB, 2)
+    $size = '{0:N2}' -f ($package.Length / 1KB)
     Write-Host "  * $($package.Name) ($size KB)" -ForegroundColor Gray
 }
 
